@@ -1,0 +1,41 @@
+#header {
+    position: initial !important;
+    padding: 0;
+}
+#page.drawers {
+    margin-top: 0;
+}
+.header-menubar .primary-navigation ul.navbar-nav li a,
+.header-menubar .navbar-nav .simplesearchform .btn-open,
+.header-menubar .navbar-nav .usermenu .dropdown a#user-menu-toggle,
+.header-menubar .navbar-nav .editmode-switch-form .input-group label,
+.primary-navigation .navigation .nav-link,
+#header .popover-region .popover-region-toggle i.icon {
+    color: #080940;
+    &:hover,
+    &:focus,
+    &.active {
+        color: #090a47;
+        font-weight: 500;
+    }
+}
+.header-menubar .primary-navigation ul.navbar-nav li a,
+.primary-navigation .navigation .nav-link {
+    display: flex;
+    align-items: center;
+}
+.dropdown .dropdown-toggle:hover,
+.dropdown .dropdown-toggle:focus,
+.dropdown .dropdown-toggle:active,
+.btn-outline-secondary:not(:disabled):not(.disabled):active,
+.btn-outline-secondary:not(:disabled):not(.disabled).active,
+.show > .btn-outline-secondary.dropdown-toggle {
+    border: none;
+}
+.dropdown-item {
+    padding: 10px 16px;
+}
+.dropdown .dropdown-menu a:hover {
+    font-weight: 500;
+    background: #f7f6f6;
+}
