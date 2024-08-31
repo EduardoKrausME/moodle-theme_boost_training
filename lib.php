@@ -16,7 +16,6 @@
 
 /**
  * lib.php
- *
  * This is built using the boost template to allow for new theme's using
  * Moodle's new Boost theme engine
  *
@@ -24,7 +23,6 @@
  * @copyright   2024 Eduardo kraus (http://eduardokraus.com)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 
 /**
  * Page init functions runs every time page loads.
@@ -40,10 +38,8 @@ function theme_boost_training_page_init(moodle_page $page) {
 }
 
 /**
- * @param $colorname
- *
+ * @param string $colorname
  * @return string
- *
  * @throws coding_exception
  */
 function theme_boost_training_process_color_hex($colorname) {
@@ -132,18 +128,15 @@ function theme_boost_training_send_cached_css($path, $filename, $lastmodified, $
 
 /**
  * Returns an object containing HTML for the areas affected by settings.
- *
  * Do not add Clean specific logic in here, child themes should be able to
  * rely on that function just by declaring settings with similar names.
  *
  * @param renderer_base $output Pass in $OUTPUT.
  * @param moodle_page $page Pass in $PAGE.
- *
  * @return stdClass An object with the following properties:
  *      - navbarclass A CSS class to use on the navbar. By default ''.
  *      - heading HTML to use for the heading. A logo if one is selected or the default heading.
  *      - footer_description HTML to use as a footer_description. By default ''.
- *
  * @throws coding_exception
  */
 function theme_boost_training_get_html_for_settings(renderer_base $output, moodle_page $page) {
@@ -156,7 +149,7 @@ function theme_boost_training_get_html_for_settings(renderer_base $output, moodl
     }
 
     if (!empty($page->theme->settings->logo)) {
-        $return->heading = html_writer::link($CFG->wwwroot, '', array('title' => get_string('home'), 'class' => 'logo'));
+        $return->heading = html_writer::link($CFG->wwwroot, '', ['title' => get_string('home'), 'class' => 'logo']);
     } else {
         $return->heading = $output->page_heading();
     }
@@ -174,9 +167,7 @@ function theme_boost_training_get_html_for_settings(renderer_base $output, moodl
  * Logo Image URL Fetch from theme settings
  *
  * @param string $local
- *
  * @return string $logo
- *
  * @throws dml_exception
  */
 function theme_boost_training_get_logo($local = null) {
@@ -206,8 +197,9 @@ function theme_boost_training_get_logo($local = null) {
     }
 }
 
-
 /**
+ * theme_boost_training_get_body_class
+ *
  * @return string
  * @throws coding_exception
  */
@@ -215,14 +207,12 @@ function theme_boost_training_get_body_class() {
     return "theme-" . theme_boost_training_get_setting("background_color", false);
 }
 
-
 /**
  * Functions helps to get the admin config values which are related to the
  * theme
  *
  * @param string $setting
  * @param bool $format
- *
  * @return bool
  * @throws coding_exception
  */
@@ -251,10 +241,8 @@ function theme_boost_training_get_setting($setting, $format = true) {
 /**
  * Renderer the slider images.
  *
- * @param $imagesetting
- *
+ * @param string $imagesetting
  * @return string
- *
  * @throws coding_exception
  * @throws dml_exception
  */
@@ -270,11 +258,11 @@ function theme_boost_training_get_setting_image($imagesetting) {
 }
 
 /**
- * @param $setting
- * @param $filearea
+ * theme_boost_training_setting_file_url
  *
+ * @param string $setting
+ * @param string $filearea
  * @return moodle_url|null
- *
  * @throws dml_exception
  */
 function theme_boost_training_setting_file_url($setting, $filearea) {
@@ -310,7 +298,6 @@ function theme_boost_training_theme_url() {
  * Display Footer Block Custom Links
  *
  * @param string $menuname Footer block link name.
- *
  * @return string The Footer links are return.
  * @throws coding_exception
  * @throws moodle_exception
@@ -350,7 +337,7 @@ function theme_boost_training_generate_links($menuname = '') {
  */
 function theme_boost_training_hidden_courses_ids() {
     global $DB;
-    $hcourseids = array();
+    $hcourseids = [];
     $result = $DB->get_records_sql("SELECT id FROM {course} WHERE visible='0' ");
     if (!empty($result)) {
         foreach ($result as $row) {
@@ -365,12 +352,11 @@ function theme_boost_training_hidden_courses_ids() {
  * This function used in course home page.
  *
  * @param string $text
- *
  * @return string
  */
 function theme_boost_training_strip_html_tags($text) {
     $text = preg_replace(
-        array(
+        [
             // Remove invisible content.
             '@<head[^>]*?>.*?</head>@siu',
             '@<style[^>]*?>.*?</style>@siu',
@@ -389,12 +375,12 @@ function theme_boost_training_strip_html_tags($text) {
             '@</?((form)|(button)|(fieldset)|(legend)|(input))@iu',
             '@</?((label)|(select)|(optgroup)|(option)|(textarea))@iu',
             '@</?((frameset)|(frame)|(iframe))@iu',
-        ),
-        array(
+        ],
+        [
             ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
             "\n\$0", "\n\$0", "\n\$0", "\n\$0", "\n\$0", "\n\$0",
             "\n\$0", "\n\$0",
-        ),
+        ],
         $text
     );
     return strip_tags($text);
@@ -406,7 +392,6 @@ function theme_boost_training_strip_html_tags($text) {
  * @param string $str
  * @param integer $n
  * @param string $endchar
- *
  * @return string $out
  */
 function theme_boost_training_course_trim_char($str, $n = 500, $endchar = '&#8230;') {
@@ -414,7 +399,7 @@ function theme_boost_training_course_trim_char($str, $n = 500, $endchar = '&#823
         return $str;
     }
 
-    $str = preg_replace("/\s+/", ' ', str_replace(array("\r\n", "\r", "\n"), ' ', $str));
+    $str = preg_replace("/\s+/", ' ', str_replace(["\r\n", "\r", "\n"], ' ', $str));
     if (strlen($str) <= $n) {
         return $str;
     }
@@ -429,7 +414,6 @@ function theme_boost_training_course_trim_char($str, $n = 500, $endchar = '&#823
  *
  * @param string $hexa
  * @param int $opacity
- *
  * @return string
  */
 function theme_boost_training_get_hexa($hexa, $opacity) {
@@ -447,45 +431,48 @@ function theme_boost_training_get_hexa($hexa, $opacity) {
 }
 
 /**
+ * theme_boost_training_coursemodule_standard_elements
+ *
  * @param moodleform_mod $data The moodle quickforms wrapper object.
  * @param MoodleQuickForm $mform The actual form object (required to modify the form).
- *
  * @throws coding_exception
  * @throws dml_exception
  */
 function theme_boost_training_coursemodule_standard_elements($data, $mform) {
     global $CFG;
 
-    $mform->addElement('header', 'theme_boost_training_icons',
-        get_string('settings_icons_change_icons', 'theme_boost_training'));
-    $configuration = get_string('configuration');
-    $link = "<a href='{$CFG->wwwroot}/admin/settings.php?section=themesettingboost_training#theme_boost_training_icons'
+    if ($CFG->theme == "boost_training") {
+        $mform->addElement('header', 'theme_boost_training_icons',
+            get_string('settings_icons_change_icons', 'theme_boost_training'));
+        $configuration = get_string('configuration');
+        $link = "<a href='{$CFG->wwwroot}/admin/settings.php?section=themesettingboost_training#theme_boost_training_icons'
                 target='_blank'>{$configuration}</a>";
 
-    if ($settingsiconsnum = get_config('theme_boost_training', 'settings_icons_num')) {
+        if ($settingsiconsnum = get_config('theme_boost_training', 'settings_icons_num')) {
 
-        $choices = [0 => get_string("settings_icons_none", 'theme_boost_training')];
-        for ($i = 1; $i <= $settingsiconsnum; $i++) {
-            $name = get_config('theme_boost_training', "settings_icons_name_{$i}");
-            $image = get_config('theme_boost_training', "settings_icons_image_{$i}");
+            $choices = [0 => get_string("settings_icons_none", 'theme_boost_training')];
+            for ($i = 1; $i <= $settingsiconsnum; $i++) {
+                $name = get_config('theme_boost_training', "settings_icons_name_{$i}");
+                $image = get_config('theme_boost_training', "settings_icons_image_{$i}");
 
-            if ($name && $image) {
-                $choices[$i] = $name;
+                if ($name && $image) {
+                    $choices[$i] = $name;
+                }
             }
+
+            if ($data->get_coursemodule() && isset($data->get_coursemodule()->id)) {
+                $name = "theme_boost_training_customicon_{$data->get_coursemodule()->id}";
+                $customicon = get_config('theme_boost_training', $name);
+
+                $data->set_data(['theme_boost_training_customicon' => $customicon]);
+            }
+
+            $mform->addElement('select', 'theme_boost_training_customicon',
+                get_string('settings_icons_select_icon', 'theme_boost_training', $link),
+                $choices);
+        } else {
+            $mform->addElement('html', get_string('settings_icons_module_disable', 'theme_boost_training', $link));
         }
-
-        if ($data->get_coursemodule() && isset($data->get_coursemodule()->id)) {
-            $name = "theme_boost_training_customicon_{$data->get_coursemodule()->id}";
-            $customicon = get_config('theme_boost_training', $name);
-
-            $data->set_data(['theme_boost_training_customicon' => $customicon]);
-        }
-
-        $mform->addElement('select', 'theme_boost_training_customicon',
-            get_string('settings_icons_select_icon', 'theme_boost_training', $link),
-            $choices);
-    } else {
-        $mform->addElement('html', get_string('settings_icons_module_disable', 'theme_boost_training', $link));
     }
 }
 
@@ -494,19 +481,10 @@ function theme_boost_training_coursemodule_standard_elements($data, $mform) {
  *
  * @param moodleform $data Data from the form submission.
  * @param stdClass $course The course.
- *
  * @return moodleform
- *
  * @throws dml_exception
  */
 function theme_boost_training_coursemodule_edit_post_actions($data, $course) {
-    $name = "theme_boost_training_customicon_{$data->coursemodule}";
-    $customicon = get_config('theme_boost_training', $name);
-    if ($customicon != $data->theme_boost_training_customicon) {
-        set_config($name, $data->theme_boost_training_customicon, 'theme_boost_training');
-        theme_reset_all_caches();
-    }
-
     return $data;
 }
 
@@ -520,13 +498,11 @@ function theme_boost_training_coursemodule_edit_post_actions($data, $course) {
  * @param array $args
  * @param bool $forcedownload
  * @param array $options
- *
  * @return bool
- *
  * @throws coding_exception
  * @throws moodle_exception
  */
-function theme_boost_training_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
+function theme_boost_training_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
     static $theme;
 
     if (empty($theme)) {
@@ -535,6 +511,13 @@ function theme_boost_training_pluginfile($course, $cm, $context, $filearea, $arg
     if ($context->contextlevel == CONTEXT_SYSTEM) {
         if ($filearea === 'style') {
             theme_boost_training_serve_css($args[1]);
+        } else if ($filearea === 'editor_home' || $filearea === 'editor_footer') {
+            $fullpath = sha1("/{$context->id}/theme_boost_training/{$filearea}/{$args[0]}/{$args[1]}");
+            $fs = get_file_storage();
+            if ($file = $fs->get_file_by_hash($fullpath)) {
+                return send_stored_file($file, 0, 0, false, $options);
+            }
+            send_file_not_found();
         } else if ($filearea === 'pagebackground') {
             return $theme->setting_file_serve('pagebackground', $args, $forcedownload, $options);
         } else if (preg_match("/slide[1-9][0-9]*image/", $filearea) !== false) {
@@ -555,21 +538,25 @@ function theme_boost_training_pluginfile($course, $cm, $context, $filearea, $arg
  *
  * @param string $css
  * @param string $theme
- *
  * @return string $css
- *
  * @throws coding_exception
  * @throws dml_exception
  */
 function theme_boost_training_process_css($css, $theme) {
     global $DB;
 
+    // Import site fonts.
+    $fontimport = \theme_boost_training\fonts\font_util::css('sitefonts');
+    $css = "@import url('{$fontimport}');\n{$css}";
+
+    // Local css.
     if (@file_exists(__DIR__ . "/style/boost_training.css")) {
         $customcss = file_get_contents(__DIR__ . "/style/boost_training.css");
 
-        $css = "{$css}{$customcss}";
+        $css = "{$css}\n{$customcss}";
     }
 
+    // Color list.
     $css =
         ":root {\n" .
         "    --color_primary:   " . theme_boost_training_process_color_hex("theme_color__color_primary") . " !important;\n" .
@@ -579,19 +566,11 @@ function theme_boost_training_process_css($css, $theme) {
         "    --color_titles:    " . theme_boost_training_process_color_hex("theme_color__color_titles") . " !important;\n" .
         "}" . $css;
 
-    $fontfamily = theme_boost_training_get_setting("fontfamily");
-    if (isset($fontfamily[3])) {
-        $sizes = "0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap";
-        $fontfamily1 = "@import url('https://fonts.googleapis.com/css2?family={$fontfamily}:ital,wght@{$sizes}');";
-        $fontfamily2 = "body,*{font-family:{$fontfamily}, Arial, Helvetica, sans-serif;}";
-    } else {
-        $fontfamily1 = "";
-        $fontfamily2 = "body,*{font-family:Arial, Helvetica, sans-serif;}";
-    }
-
+    // Custom CSS.
     $customcss = str_replace("&gt;", ">", theme_boost_training_get_setting("customcss"));
-    $css = "{$fontfamily1}{$fontfamily2}\n\n{$css}\n{$customcss}\n{$fontfamily2}";
+    $css = "{$css}\n{$customcss}";
 
+    // Icons modules.
     $sql = "SELECT name, value  FROM {config_plugins} WHERE name LIKE 'theme_boost_training_customicon_%'";
     $customicons = $DB->get_records_sql($sql);
     foreach ($customicons as $customicon) {
@@ -625,26 +604,84 @@ function theme_boost_training_process_css($css, $theme) {
             }";
     }
 
-    $top_scroll_background_color = theme_boost_training_get_setting("top_scroll_background_color");
-    $top_scroll_text_color_desc = theme_boost_training_get_setting("top_scroll_text_color_desc");
+    // Color on roll page.
+    global $CFG;
+    if ($CFG->theme != "boost_training") {
+        $topscrollbackgroundcolor = theme_boost_training_get_setting("top_scroll_background_color");
+        $topscrolltextcolor = theme_boost_training_get_setting("top_scroll_text_color");
 
-    $css .= "
+        $css .= "
+            .fixed-top .header-menubar .navbar-nav .simplesearchform .btn-open,
+            #header.fixed-top  .popover-region .popover-region-toggle i.icon,
+            .fixed-top .header-menubar .navbar-nav .usermenu .dropdown a#user-menu-toggle,
+            .fixed-top .header-menubar .navbar-nav .editmode-switch-form .input-group label,
+            .fixed-top .usermenu .moodle-actionmenu a.dropdown-toggle,
+            .navbar-light.fixed-top .navbar-nav .show>.nav-link,
+            .navbar-light.fixed-top .navbar-nav .active>.nav-link,
+            .navbar-light.fixed-top .navbar-nav .nav-link.show,
+            .navbar-light.fixed-top .navbar-nav .nav-link.active,
+            .fixed-top .header-logo a.navbar-brand img,
+            .fixed-top .header-logo a.navbar-brand span,
+            .fixed-top .header-menubar .primary-navigation ul.navbar-nav > li > a {
+                color: {$topscrolltextcolor} !important;
+            }
+            .fixed-top .custom-switch .custom-control-label:after{
+                background: {$topscrolltextcolor} !important;
+            }
             .fixed-top {
-                background: {$top_scroll_background_color} !important;
+                background: {$topscrollbackgroundcolor} !important;
             }
-            .fixed-top *,
-            .fixed-top :before {
-                color: {$top_scroll_text_color_desc} !important;
+            
+            .ever-fixed-top .header-menubar .navbar-nav .simplesearchform .btn-open,
+            #header.ever-fixed-top  .popover-region .popover-region-toggle i.icon,
+            .ever-fixed-top .header-menubar .navbar-nav .usermenu .dropdown a#user-menu-toggle,
+            .ever-fixed-top .header-menubar .navbar-nav .editmode-switch-form .input-group label,
+            .ever-fixed-top .usermenu .moodle-actionmenu a.dropdown-toggle,
+            .navbar-light.ever-fixed-top .navbar-nav .show>.nav-link,
+            .navbar-light.ever-fixed-top .navbar-nav .active>.nav-link,
+            .navbar-light.ever-fixed-top .navbar-nav .nav-link.show,
+            .navbar-light.ever-fixed-top .navbar-nav .nav-link.active,
+            .ever-fixed-top .header-logo a.navbar-brand img,
+            .ever-fixed-top .header-logo a.navbar-brand span,
+            .ever-fixed-top .header-menubar .primary-navigation ul.navbar-nav > li > a {
+                color: {$topscrolltextcolor} !important;
             }
-    ";
+            .ever-fixed-top .custom-switch .custom-control-label:after{
+                background: {$topscrolltextcolor} !important;
+            }
+            .ever-fixed-top {
+                background: {$topscrollbackgroundcolor} !important;
+            }";
+    }
+
+    // Fonts.
+    $fontfamilytext = theme_boost_training_get_setting("fontfamily");
+    $fontfamilytext = isset($fontfamilytext[3]) ? "{$fontfamilytext}," : "";
+    $fontfamilytext = "body,* {font-family:{$fontfamilytext} Arial, Helvetica, sans-serif}";
+
+    $fontfamilytitle = theme_boost_training_get_setting("fontfamily_title");
+    $fontfamilytitle = isset($fontfamilytitle[3]) ? "{$fontfamilytitle}," : "";
+    $fontfamilytitle = "h1,h2,h3,h4,h5,h6 {font-family:{$fontfamilytitle} Arial, Helvetica, sans-serif}";
+
+    $fontfamilysitename = theme_boost_training_get_setting("fontfamily_sitename");
+    $fontfamilysitename = isset($fontfamilysitename[3]) ? "{$fontfamilysitename}," : "";
+    $fontfamilysitename = ".header-logo a.navbar-brand span {font-family:{$fontfamilysitename} Arial, Helvetica, sans-serif}";
+
+    $fontfamilymenus = theme_boost_training_get_setting("fontfamily_menus");
+    $fontfamilymenus = isset($fontfamilymenus[3]) ? "{$fontfamilymenus}," : "";
+    $fontfamilymenus = ".header-menubar .primary-navigation ul.navbar-nav li a,
+            .header-menubar .navbar-nav .usermenu .dropdown a#user-menu-toggle,
+            .header-menubar .navbar-nav .editmode-switch-form .input-group label,
+            .usermenu .moodle-actionmenu a.dropdown-toggle,
+            .navbar-light .navbar-nav .show>.nav-link,
+            .navbar-light .navbar-nav .active>.nav-link,
+            .navbar-light .navbar-nav .nav-link.show,
+            .navbar-light .navbar-nav .nav-link.active,
+            .header-logo a.navbar-brand img {
+                font-family : {$fontfamilymenus} Arial, Helvetica, sans-serif
+            }";
+
+    $css = "{$css}\n{$fontfamilytext}\n{$fontfamilytitle}\n{$fontfamilysitename}\n{$fontfamilymenus}";
 
     return $css;
-}
-
-/**
- * @param string $identifier
- */
-function theme_boost_training_get_string($identifier) {
-    //$CFG->debugdeveloper = 0;
-    echo get_string($identifier, 'theme_boost_training');
 }

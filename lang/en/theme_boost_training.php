@@ -22,8 +22,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Boost Magnific';
-$string['choosereadme'] = 'Boost Magnific is a theme crafted with care to bring cheerful colors to Moodle.';
+$string['pluginname'] = 'Boost Training';
+$string['choosereadme'] = 'Boost Training is a theme crafted with care to bring cheerful colors to Moodle.';
 
 // Slides.
 $string['settings_slideshow_heading'] = 'SlideShow';
@@ -45,6 +45,24 @@ $string['slideshow_url_desc'] = 'Insert the destination link for the slide image
 $string['slideshow_text'] = 'Short descriptive text for the Slide';
 $string['slideshow_text_desc'] = 'Insert a short text about the slide.';
 
+// Blocos dos meus cursos.
+$string['settings_mycourses_heading'] = 'My Courses Blocks';
+$string['theme_boost_training_mycourses_editbooton'] = 'Edit Blocks';
+
+$string['mycourses_numblocos'] = 'No blocks';
+$string['mycourses_numblocos_desc'] = 'How many images do you want in the SlideShow?';
+$string['mycourses_numblocos_nenhum'] = 'No slides on the homepage';
+
+$string['mycourses_info'] = 'Block {$a}';
+$string['mycourses_icon'] = 'Icon';
+$string['mycourses_icon_desc'] = 'A representative icon for the block. Icon size should be 48x48 pixels.';
+$string['mycourses_url'] = 'Block Link';
+$string['mycourses_url_desc'] = 'The URL to navigate to when clicking the block. It can be an external link or an internal link within the platform.';
+$string['mycourses_color'] = 'Block Background Color';
+$string['mycourses_color_desc'] = 'The background color for the block.';
+$string['mycourses_title'] = 'Short Block Title';
+$string['mycourses_title_desc'] = 'A short and descriptive title for the block.';
+
 // About.
 $string['settings_about_heading'] = 'About your Moodle';
 $string['theme_boost_training_about_editbooton'] = 'Edit About block';
@@ -53,8 +71,7 @@ $string['frontpage_about_enable_desc'] = 'If checked, the About Block will appea
 $string['frontpage_about_title'] = 'About block title';
 $string['frontpage_about_title_default'] = 'Our Global Community';
 $string['frontpage_about_logo'] = 'Different logo to be shown here';
-$string['frontpage_about_logo_desc'] = 'If set, this logo will be used here instead of the Top logo.<br>
-Blank uses the Top Logo!';
+$string['frontpage_about_logo_desc'] = 'If set, this logo will be used here instead of the Top logo.<br>Blank uses the Top Logo!';
 $string['frontpage_about_description'] = 'Describe what you do';
 $string['frontpage_about_description_desc'] = 'Describe in a maximum of 5 lines the purpose of your Moodle';
 $string['frontpage_about_info'] = 'Data box {$a}';
@@ -98,7 +115,41 @@ $string['social_instagram_desc'] = 'Your organization\'s Instagram URL.';
 $string['social_facebook'] = 'Your Facebook';
 $string['social_facebook_desc'] = 'Your organization\'s Facebook URL.';
 
-$string['settings_top_heading'] = 'Top';
+$string['settings_top_heading'] = 'Top Menu';
+$string['custommenuitems'] = 'Custom Top Menu Items';
+$string['custommenuitems_desc'] = 'You can create a custom menu alongside the top menus. The root menu should start flush with the edge, and submenus should be preceded by a hyphen (-). The number of hyphens determines the item depth. Thus, items with a single hyphen appear in a submenu below the previous top-level item, and items with two hyphens appear in a submenu below the preceding submenu.
+The content of each menu item should consist of up to three elements (<strong>label</strong> | <strong>url</strong> | <strong>tooltip</strong> | <strong>lang</strong>), each separated by the "|" character.
+<ul>
+<li><strong>label</strong>: This is the text that will be displayed within the menu item. You must specify a label for each menu item.</li>
+<li><strong>url</strong>: This is the URL to which the user will be taken upon clicking the menu item. This is optional; if not provided, the item will not be linked anywhere.<br>
+Other attributes such as "target" can be appended to the end of the URL.</li>
+<li><strong>tooltip</strong>: If you provide a URL, you can also choose to provide a tooltip for the link created with the URL. This is optional, and if not defined, the label is used as the tooltip for the menu item.</li>
+<li><strong>lang</strong>: You can add a language code (or a comma-separated list of codes) as the fourth element of the line. The line will be displayed only if the user has selected the listed language(s).</li>
+</ul>
+Below is an example of how you would create a custom menu:
+<blockquote><pre>
+Courses
+-All courses | /course/
+-My courses
+--Example Course 
+---Example Course 7 | /course/view.php?id=7
+---Example Course 9 | /course/view.php?id=9
+--Test Course 
+---Test Course 2 | /course/view.php?id=2
+---Test Course 5 | /course/view.php?id=5
+Google
+-Google in any language | https://google.com/" target="_blank
+-Google in Mexico | https://www.google.com.mx/" target="_blank|Google Label|en
+-Google in Portuguese | https://google.com.br/" target="_blank|Google Label|pt,pt_br,pt_br_kids
+Support Page | https://support.com/" target="_blank
+</pre></blockquote>
+For Moodle with support for multiple languages, the <strong>label</strong> value should be formatted as <strong>"langstringname,componentname"</strong>.
+<blockquote><pre>
+profile,moodle | /user/profile.php
+messages,message | /message/index.php
+</pre></blockquote>
+<a href="https://docs.moodle.org/404/en/Advanced_theme_settings" target="_blank">More menu information</a>';
+
 
 $string['settings_footer_heading'] = 'Footer Block';
 
@@ -132,19 +183,29 @@ $string['footer_show_copywriter'] = 'Show Made with ❤️';
 $string['footer_show_copywriter_desc'] = 'Uncheck if you want to hide the "Made with ❤️"';
 
 // Logos.
-$string['settings_logos_heading'] = 'Logos';
 $string['logo_color'] = 'Colored Logo';
 $string['logo_color_desc'] = 'Please upload your colored LOGO if you want to include it at the top. This logo will be displayed as the page is scrolled, and the menu will be displayed on a white background.';
-$string['logo_write'] = 'White Logo';
-$string['logo_write_desc'] = 'Please upload your white LOGO if you want to include it at the top. This logo will be displayed when scrolling remains at the top, and the menu will be displayed on a colored background.';
+$string['logo_write'] = 'Top menu logo on scroll';
+$string['logo_write_desc'] = 'Please upload your logo if you wish to include it at the top. This logo will be displayed when scrolling remains at the top, and the menu will be displayed on a colored background.';
 
-// Themes and CSS.
-$string['settings_theme_heading'] = 'Theme and CSS';
+// CSS.
+$string['settings_css_heading'] = 'Fonts and CSS';
+$string['fontpreview'] = 'Font List Preview';
+$string['fontfamily'] = 'Site Text Fonts';
+$string['fontfamily_desc'] = 'Choose which font you want to use for the text on your Moodle site.';
+$string['fontfamily_title'] = 'Title Text Fonts';
+$string['fontfamily_title_desc'] = 'Choose which font you want to use for titles on your Moodle site.';
+$string['sitefonts'] = 'Additional Google Fonts';
+$string['sitefonts_desc'] = 'Insert the @import code from Google Fonts as indicated in the image below. After saving, the "Site Font" field will be updated, displaying these fonts. You can add multiple @import as needed.';
+$string['fontfamily_menus'] = 'Menu Fonts';
+$string['fontfamily_menus_desc'] = 'Choose which font you want to use for menus on your Moodle site.';
+$string['fontfamily_sitename'] = 'Font for the site name';
+$string['fontfamily_sitename_desc'] = 'The font that will be applied to the site name if a logo is not provided.';
 $string['customcss'] = 'Custom CSS';
 $string['customcss_desc'] = 'Any CSS rules you add to this text area will be reflected on all pages, making it easy to customize this theme.';
-$string['fontfamily'] = 'Site Font';
-$string['fontfamily_desc'] = 'Choose which font you want to use on your Moodle';
 
+// Themes.
+$string['settings_theme_heading'] = 'Theme';
 $string['theme_color'] = 'Color Selection';
 $string['theme_color_desc'] = 'Select the colors of Moodle texts and buttons or click the line below:';
 $string['theme_color_blue'] = 'Blue';
@@ -193,7 +254,7 @@ $string['login_signup_description'] = 'Text on the side of the Create an Account
 $string['login_signup_description_desc'] = 'Text that will appear only on the Create an Account screen';
 
 // Privacy.
-$string['privacy:metadata'] = 'The Boost Magnific theme does not store any personal data about any user.';
+$string['privacy:metadata'] = 'The Boost Training theme does not store any personal data about any user.';
 
 // Settings icons.
 $string['settings_icons_heading'] = 'Icons';
@@ -217,7 +278,6 @@ $string['settings_icons_default_slide'] = 'Slides';
 $string['settings_icons_default_support'] = 'Support';
 $string['settings_icons_default_download'] = 'Download';
 
-
 $string['top_color_heading'] = 'Scroll Top Color';
 $string['top_scroll_background_color'] = 'Background Color of Top Menu on Scroll';
 $string['top_scroll_background_color_desc'] = 'Set the background color when scrolling the page.';
@@ -237,6 +297,8 @@ $string['editor_link_footer_all'] = 'Edit the footer block for all languages';
 $string['content_type_empty'] = '(No content)';
 $string['content_type_default'] = 'Moodle default';
 $string['content_type_html'] = 'Page to be created with editor';
+$string['content_pagefonts'] = 'Google Extra Fonts';
+$string['content_pagefonts_desc'] = 'Add here the @import link from Google for extra fonts.<br>You can put multiple import.<br><a href="https://fonts.google.com/selection/embed" target="google">Embed code</a><br><img src="{$a}" style="max-width: 100%;width: 420px;">';
 
 // HTML Editor.
 $string['grapsjs-assetmanager-addbutton'] = 'Add image';
@@ -285,7 +347,6 @@ $string['grapsjs-stylemanager-sectors-general'] = 'General';
 $string['grapsjs-stylemanager-sectors-layout'] = 'Layout';
 $string['grapsjs-stylemanager-sectors-typography'] = 'Typography';
 $string['grapsjs-stylemanager-sectors-decorations'] = 'Decorations';
-$string['grapsjs-stylemanager-sectors-extra'] = 'Extra';
 $string['grapsjs-stylemanager-sectors-flex'] = 'Flex';
 $string['grapsjs-stylemanager-sectors-dimension'] = 'Dimension';
 $string['grapsjs-stylemanager-properties-float'] = 'Float';

@@ -18,13 +18,13 @@
 	Page header.
 }}
 
-<nav id="header" class="navbar navbar-expand"
+<nav id="header" class="navbar navbar-light navbar-expand"
      aria-label="{{#str}}sitemenubar, admin{{/str}}">
 
     <div class="container-fluid">
         <div class="header-menubar header-menubar-inner">
 
-            <div class="header-logo  mr-auto">
+            <div class="header-logo">
                 <a class="navbar-brand" href="{{{config.wwwroot}}}/?redirect=0">
                     {{{logourl_header}}}
                 </a>
@@ -54,7 +54,7 @@
                 {{{output.page_heading_menu}}}
             </ul>
 
-            <div id="usernavigation" class="navbar-nav">
+            <div id="usernavigation" class="navbar-nav ml-auto">
                 {{#output.search_box}}
                     {{{output.search_box}}}
                     <div class="divider border-left h-75 align-self-center mx-1"></div>

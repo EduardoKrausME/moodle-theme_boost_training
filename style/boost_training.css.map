@@ -1,0 +1,10 @@
+{
+  "version": 3,
+  "sourceRoot": "",
+  "sources": [
+    "boost_training.scss"
+  ],
+  "names": [],
+  "mappings": "AAAA,QACI,4BACA,UAEJ,cACI,aAEJ,uVAMI,cACA,unCAGI,cACA,gBAGR,iGAEI,aACA,mBAEJ,yQAMI,YAEJ,eACI,kBAEJ,iCACI,gBACA",
+  "file": "boost_training.css"
+}

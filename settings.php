@@ -32,7 +32,7 @@ if ($ADMIN->fulltree) {
 
     require_once(__DIR__ . "/settings-theme.php");
 
-    require_once(__DIR__ . "/settings-logos.php");
+    require_once(__DIR__ . "/settings-css.php");
 
     require_once(__DIR__ . "/settings-icons.php");
 
@@ -50,5 +50,3 @@ if ($ADMIN->fulltree) {
 
     require_once(__DIR__ . "/settings-login.php");
 }
-
-
