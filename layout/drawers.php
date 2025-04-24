@@ -115,7 +115,7 @@ if (optional_param("embed-frame-top", 0, PARAM_INT)) {
             if ($templatecontext["course_summary"]) {
                 $options = ['context' => $this->page->context];
                 $summary = file_rewrite_pluginfile_urls(
-                    $this->page->course->summary, 'pluginfile.php', $this->page->context->id, 'course', 'summary', NULL);
+                    $this->page->course->summary, 'pluginfile.php', $this->page->context->id, 'course', 'summary', null);
                 $summary = format_text($summary, $this->page->course->summaryformat, $options);
                 $templatecontext["course_summary"] = $summary;
             }
