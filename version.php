@@ -31,4 +31,5 @@ $plugin->maturity = MATURITY_STABLE;
 $plugin->component = 'theme_boost_training';
 $plugin->dependencies = [
     "customfield_picture" => 2024100800,
+    "theme_boost" => 2024100100,
 ];
