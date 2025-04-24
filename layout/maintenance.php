@@ -15,20 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The maintenance layout.
+ * A maintenance layout for the boost theme.
  *
- * @package     theme_boost_training
- * @copyright   2024 Eduardo kraus (http://eduardokraus.com)
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   theme_boost_training
+ * @copyright 2016 Damyon Wiese
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-$logourl = theme_boost_training_get_logo("header");
-$data = [
+$templatecontext = [
+    // We cannot pass the context to format_string, this layout can be used during
+    // installation. At that stage database tables do not exist yet.
     'sitename' => format_string($SITE->shortname, true, ["escape" => false]),
     'output' => $OUTPUT,
-    "logourl" => $logourl,
-    'maintenancefooter' => true,
 ];
-echo $OUTPUT->render_from_template('theme_boost_training/maintenance', $data);
+
+echo $OUTPUT->render_from_template('theme_boost_training/maintenance', $templatecontext);

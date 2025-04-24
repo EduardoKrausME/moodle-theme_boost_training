@@ -15,107 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The secure layout.
+ * A secure layout for the boost theme.
  *
- * @package     theme_boost_training
- * @copyright   2024 Eduardo kraus (http://eduardokraus.com)
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   theme_boost_training
+ * @copyright 2016 Damyon Wiese
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-// Get the HTML for the settings bits.
-$html = theme_boost_training_get_html_for_settings($OUTPUT, $PAGE);
-
-echo $OUTPUT->doctype() ?>
-<html <?php echo $OUTPUT->htmlattributes(); ?>>
-<head>
-    <title><?php echo $OUTPUT->page_title(); ?></title>
-    <link rel="shortcut icon" href="<?php echo $OUTPUT->favicon(); ?>"/>
-    <?php echo $OUTPUT->standard_head_html() ?>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-
-<body data-layout="secure" <?php echo $OUTPUT->body_attributes([theme_boost_training_get_body_class()]); ?>>
-
-<?php echo $OUTPUT->standard_top_of_body_html() ?>
-
-<?php
-
-require_once($CFG->libdir . '/behat/lib.php');
-$extraclasses = [theme_boost_training_get_body_class()];
-$bodyattributes = $OUTPUT->body_attributes($extraclasses);
 $blockshtml = $OUTPUT->blocks('side-pre');
 $hasblocks = strpos($blockshtml, 'data-block=') !== false;
-$regionmainsettingsmenu = $OUTPUT->region_main_settings_menu();
-$logo = theme_boost_training_get_logo("header");
+$bodyattributes = $OUTPUT->body_attributes();
 
-$custom = $OUTPUT->custom_menu();
+$templatecontext = [
+    'sitename' => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), "escape" => false]),
+    'output' => $OUTPUT,
+    'bodyattributes' => $bodyattributes,
+    'sidepreblocks' => $blockshtml,
+    'hasblocks' => $hasblocks,
+];
 
-if ($custom == '') {
-    $class = "navbar-toggler navbar-toggler-right d-lg-none nocontent-navbar";
-} else {
-    $class = "navbar-toggler navbar-toggler-right d-lg-none";
+if (empty($PAGE->layout_options['noactivityheader'])) {
+    $header = $PAGE->activityheader;
+    $renderer = $PAGE->get_renderer('core');
+    $templatecontext['headercontent'] = $header->export_for_template($renderer);
 }
 
-$templatedata = [
-    'sitename' => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), "escape" => false]),
-    'output' => $OUTPUT,
-    'sidepreblocks' => $blockshtml,
-    'hasblocks' => $hasblocks,
-    'bodyattributes' => $bodyattributes,
-    'regionmainsettingsmenu' => $regionmainsettingsmenu,
-    'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu),
-    'logo' => $logo,
-    "customclass" => $class,
-];
+echo $OUTPUT->render_from_template('theme_boost_training/secure', $templatecontext);
 
-echo $OUTPUT->render_from_template('theme_boost_training/header', $templatedata);
-?>
-
-<div id="page">
-
-    <header id="page-header" class="clearfix">
-        <?php echo $html->heading; ?>
-    </header>
-
-    <div id="page" class="container">
-        <div id="page-content" class="row">
-            <div id="region-bs-main-and-pre" class="col-md-9">
-                <div class="row">
-                    <section id="region-main" class="col-md-8 pull-right">
-                        <?php echo $OUTPUT->main_content(); ?>
-                    </section>
-                    <?php echo $OUTPUT->blocks('side-pre', 'col-md-4 desktop-first-column'); ?>
-                </div>
-            </div>
-            <?php echo $OUTPUT->blocks('side-post', 'col-md-3'); ?>
-        </div>
-    </div>
-
-</div>
-
-<?php
-$USER->ajax_updatable_user_prefs['drawer-open-nav'] = PARAM_ALPHA;
-$extraclasses = [theme_boost_training_get_body_class()];
-$bodyattributes = $OUTPUT->body_attributes($extraclasses);
-$blockshtml = $OUTPUT->blocks('side-pre');
-$hasblocks = strpos($blockshtml, 'data-block=') !== false;
-$regionmainsettingsmenu = $OUTPUT->region_main_settings_menu();
-
-$templatedata = [
-    'sitename' => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), "escape" => false]),
-    'output' => $OUTPUT,
-    'sidepreblocks' => $blockshtml,
-    'hasblocks' => $hasblocks,
-    'bodyattributes' => $bodyattributes,
-    'regionmainsettingsmenu' => $regionmainsettingsmenu,
-    'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu),
-];
-
-$templatedata = array_merge($templatedata, \theme_boost_training\template\footer_data::get_data());
-$footerlayout = $OUTPUT->render_from_template('theme_boost_training/footer', $templatedata);
-?>
-
-</body>
-</html>

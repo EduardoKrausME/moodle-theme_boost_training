@@ -17,23 +17,18 @@
 /**
  * A drawer based layout for the boost theme.
  *
- * @package     theme_boost_training
- * @copyright   2024 Eduardo kraus (http://eduardokraus.com)
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   theme_boost_training
+ * @copyright 2021 Bas Brands
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/behat/lib.php');
 require_once($CFG->dirroot . '/course/lib.php');
-require_once(__DIR__ . '/../lib.php');
 
 // Add block button in editing mode.
 $addblockbutton = $OUTPUT->addblockbutton();
-
-$USER->ajax_updatable_user_prefs['drawer-open-nav'] = PARAM_ALPHA;
-$USER->ajax_updatable_user_prefs['drawer-open-index'] = PARAM_BOOL;
-$USER->ajax_updatable_user_prefs['drawer-open-block'] = PARAM_BOOL;
 
 if (isloggedin()) {
     $courseindexopen = (get_user_preferences('drawer-open-index', true) == true);
@@ -43,11 +38,11 @@ if (isloggedin()) {
     $blockdraweropen = false;
 }
 
-if (defined('BEHAT_SITE_RUNNING')) {
+if (defined('BEHAT_SITE_RUNNING') && get_user_preferences('behat_keep_drawer_closed') != 1) {
     $blockdraweropen = true;
 }
 
-$extraclasses = ['uses-drawers', theme_boost_training_get_body_class()];
+$extraclasses = ['uses-drawers'];
 if ($courseindexopen) {
     $extraclasses[] = 'drawer-open-index';
 }
@@ -65,10 +60,6 @@ if (!$courseindex) {
 $bodyattributes = $OUTPUT->body_attributes($extraclasses);
 $forceblockdraweropen = $OUTPUT->firstview_fakeblocks();
 
-$buildregionmainsettings = !$PAGE->include_region_main_settings_in_header_actions() && !$PAGE->has_secondary_navigation();
-// If the settings menu will be included in the header then don't add it here.
-$regionmainsettingsmenu = $buildregionmainsettings ? $OUTPUT->region_main_settings_menu() : false;
-
 $secondarynavigation = false;
 $overflow = '';
 if ($PAGE->has_secondary_navigation()) {
@@ -81,15 +72,17 @@ if ($PAGE->has_secondary_navigation()) {
     }
 }
 
-require_once("{$CFG->dirroot}/theme/boost_training/classes/navigation/primary.php");
-$primary = new \theme_boost_training\navigation\primary($PAGE);
+$primary = new core\navigation\output\primary($PAGE);
 $renderer = $PAGE->get_renderer('core');
 $primarymenu = $primary->export_for_template($renderer);
+$buildregionmainsettings = !$PAGE->include_region_main_settings_in_header_actions() && !$PAGE->has_secondary_navigation();
+// If the settings menu will be included in the header then don't add it here.
+$regionmainsettingsmenu = $buildregionmainsettings ? $OUTPUT->region_main_settings_menu() : false;
 
 $header = $PAGE->activityheader;
 $headercontent = $header->export_for_template($renderer);
 
-$templatedata = [
+$templatecontext = [
     'sitename' => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), "escape" => false]),
     'output' => $OUTPUT,
     'sidepreblocks' => $blockshtml,
@@ -98,29 +91,56 @@ $templatedata = [
     'courseindexopen' => $courseindexopen,
     'blockdraweropen' => $blockdraweropen,
     'courseindex' => $courseindex,
-    'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu),
     'primarymoremenu' => $primarymenu['moremenu'],
-    'secondarymoremenu' => $secondarynavigation,
+    'secondarymoremenu' => $secondarynavigation ?: false,
     'mobileprimarynav' => $primarymenu['mobileprimarynav'],
     'usermenu' => $primarymenu['user'],
     'langmenu' => $primarymenu['lang'],
     'forceblockdraweropen' => $forceblockdraweropen,
     'regionmainsettingsmenu' => $regionmainsettingsmenu,
+    'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu),
     'overflow' => $overflow,
     'headercontent' => $headercontent,
     'addblockbutton' => $addblockbutton,
 ];
 
-require_once("{$CFG->dirroot}/theme/boost_training/classes/template/footer_data.php");
-require_once("{$CFG->dirroot}/theme/boost_training/classes/template/frontapage_data.php");
-$templatedata = array_merge($templatedata, \theme_boost_training\template\footer_data::get_data());
-$templatedata = array_merge($templatedata, \theme_boost_training\template\frontapage_data::topo());
-
-
-$contextcourse = context_course::instance($COURSE->id);
-$course_update = has_capability('moodle/course:update', $contextcourse);
-if (!$course_update && strpos($_SERVER['REQUEST_URI'], "/scorm/player.php") > 1) {
-    echo $OUTPUT->render_from_template('theme_boost_training/drawers_scorm', $templatedata);
+if (optional_param("embed-frame-top", 0, PARAM_INT)) {
+    echo $OUTPUT->render_from_template('theme_boost_training/drawers_embed', $templatecontext);
 } else {
-    echo $OUTPUT->render_from_template('theme_boost_training/drawers', $templatedata);
+    if (strpos($_SERVER["REQUEST_URI"], "course/view.php") || strpos($_SERVER["REQUEST_URI"], "course/section.php")) {
+        $templatecontext["hasnavbarcourse"] = true;
+
+        if (strpos($_SERVER["REQUEST_URI"], "course/view.php")) {
+            $templatecontext["course_summary"] = get_config("theme_boost_training", "course_summary");
+            if ($templatecontext["course_summary"]) {
+                $options = ['context' => $this->page->context];
+                $summary = file_rewrite_pluginfile_urls(
+                    $this->page->course->summary, 'pluginfile.php', $this->page->context->id, 'course', 'summary', NULL);
+                $summary = format_text($summary, $this->page->course->summaryformat, $options);
+                $templatecontext["course_summary"] = $summary;
+            }
+        }
+    }
+
+    if ($courseindex || $hasblocks) {
+        $templatecontext += theme_boost_training_progress_content();
+    }
+
+    $templatecontext["footercount"] = 0;
+    $templatecontext["footercontents"] = [];
+    $templatecontext["footer_background_color"] = get_config("theme_boost_training", "footer_background_color");
+    for ($i = 1; $i <= 4; $i++) {
+        $footertitle = get_config("theme_boost_training", "footer_title_{$i}");
+        $footerhtml = get_config("theme_boost_training", "footer_html_{$i}");
+
+        if ($footerhtml) {
+            $templatecontext["footercount"]++;
+            $templatecontext["footercontents"][] = [
+                "footertitle" => $footertitle,
+                "footerhtml" => $footerhtml,
+            ];
+        }
+    }
+
+    echo $OUTPUT->render_from_template('theme_boost_training/drawers', $templatecontext);
 }

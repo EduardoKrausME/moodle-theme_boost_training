@@ -17,19 +17,20 @@
 /**
  * A login page layout for the boost theme.
  *
- * @package     theme_boost_training
- * @copyright   2024 Eduardo kraus (http://eduardokraus.com)
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   theme_boost_training
+ * @copyright 2016 Damyon Wiese
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-$bodyattributes = $OUTPUT->body_attributes([theme_boost_training_get_body_class()]);
-$templatedata = [
+$bodyattributes = $OUTPUT->body_attributes();
+
+$templatecontext = [
     'sitename' => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), "escape" => false]),
     'output' => $OUTPUT,
     'bodyattributes' => $bodyattributes,
 ];
-$templatedata = array_merge($templatedata, \theme_boost_training\template\frontapage_data::topo());
-$templatedata = array_merge($templatedata, \theme_boost_training\template\login_data::get_data());
-echo $OUTPUT->render_from_template('theme_boost_training/login', $templatedata);
+
+echo $OUTPUT->render_from_template('theme_boost_training/login', $templatecontext);
+

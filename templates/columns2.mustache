@@ -15,11 +15,11 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template theme_boost/columns2
+    @template theme_boost_training/columns2
 
     Admin time setting template.
 
-    Boost 2 column layout template.
+    Boost Training 2 column layout template.
 
     Context variables required for this template:
     * sitename - The name of the site
@@ -48,52 +48,68 @@
         "hasregionmainsettingsmenu": false
     }
 }}
-{{> theme_boost/head}}
+{{> theme_boost_training/head }}
 
-<body data-templates="columns2" {{{bodyattributes}}}>
+<body {{{ bodyattributes }}}>
+{{> core/local/toast/wrapper}}
 
-<div id="page-wrapper" class="position-relative">
+<div id="page-wrapper" class="d-print-block">
 
-    {{{output.standard_top_of_body_html}}}
+    {{{ output.standard_top_of_body_html }}}
 
-    {{>theme_boost_training/header}}
+    {{> theme_boost_training/navbar }}
 
-    <div id="page" class="container-fluid">
-        <ul class="navbar-nav mr-auto">
-            {{{output.custom_menu}}}
-        </ul>
-        <div class="secondarynavigation">
-            {{#secondarymoremenu}}
+    <div id="page" class="container-fluid d-print-block">
+        {{{ output.full_header }}}
+        {{#secondarymoremenu}}
+            <div class="secondary-navigation">
                 {{> core/moremenu}}
-            {{/secondarymoremenu}}
-        </div>
-
-        <div id="page-content" class="row pb-3">
+            </div>
+        {{/secondarymoremenu}}
+        <div id="page-content" class="row pb-3 d-print-block">
             <div id="region-main-box" class="col-12">
                 {{#hasregionmainsettingsmenu}}
                     <div id="region-main-settings-menu" class="d-print-none {{#hasblocks}}has-blocks{{/hasblocks}}">
-                        <div> {{{output.region_main_settings_menu}}} </div>
+                        <div> {{{ regionmainsettingsmenu }}} </div>
                     </div>
                 {{/hasregionmainsettingsmenu}}
-                <section id="region-main" {{#hasblocks}}class="has-blocks mb-3"{{/hasblocks}}>
+                <section id="region-main"
+                         {{#hasblocks}}class="has-blocks mb-3"{{/hasblocks}} aria-label="{{#str}}content{{/str}}">
+
                     {{#hasregionmainsettingsmenu}}
                         <div class="region_main_settings_menu_proxy"></div>
                     {{/hasregionmainsettingsmenu}}
-                    {{{output.course_content_header}}}
-                    {{{output.main_content}}}
-                    {{{output.activity_navigation}}}
-                    {{{output.course_content_footer}}}
+                    {{{ output.course_content_header }}}
+                    {{#headercontent}}
+                        {{> core/activity_header }}
+                    {{/headercontent}}
+                    {{#overflow}}
+                        {{> core/url_select}}
+                    {{/overflow}}
+                    {{{ output.main_content }}}
+                    {{{ output.activity_navigation }}}
+                    {{{ output.course_content_footer }}}
+
                 </section>
                 {{#hasblocks}}
-                    <section data-region="blocks-column" class="d-print-none">
-                        {{{sidepreblocks}}}
+                    <section data-region="blocks-column" class="d-print-none" aria-label="{{#str}}blocks{{/str}}">
+                        {{{ addblockbutton }}}
+                        {{{ sidepreblocks }}}
                     </section>
                 {{/hasblocks}}
             </div>
         </div>
     </div>
-    {{> theme_boost/nav-drawer}}
+    {{{ output.standard_after_main_region_html }}}
+    {{> theme_boost_training/footer }}
 </div>
 
-{{> theme_boost_training/footer}}
-
+</body>
+</html>
+{{#js}}
+    M.util.js_pending('theme_boost/loader');
+    require(['theme_boost/loader', 'theme_boost/drawer'], function(Loader, Drawer) {
+    Drawer.init();
+    M.util.js_complete('theme_boost/loader');
+    });
+{{/js}}

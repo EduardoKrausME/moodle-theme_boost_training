@@ -15,477 +15,56 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * lib.php
- * This is built using the boost template to allow for new theme's using
- * Moodle's new Boost theme engine
+ * Theme functions.
  *
- * @package     theme_boost_training
- * @copyright   2024 Eduardo kraus (http://eduardokraus.com)
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    theme_boost_training
+ * @copyright  2016 Frédéric Massart - FMCorz.net
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 /**
- * Page init functions runs every time page loads.
+ * Post process the CSS tree.
  *
- * @param moodle_page $page
+ * @param string $tree        The CSS tree.
+ * @param theme_config $theme The theme config object.
  */
-function theme_boost_training_page_init(moodle_page $page) {
-    global $CFG;
-
-    $page->requires->jquery();
-
-    $CFG->enableuserfeedback = false;
+function theme_boost_training_css_tree_post_processor($tree, $theme) {
+    $prefixer = new theme_boost_training\autoprefixer($tree);
+    $prefixer->prefix();
 }
 
 /**
- * @param string $colorname
- * @return string
- * @throws coding_exception
- */
-function theme_boost_training_process_color_hex($colorname) {
-    $color = theme_boost_training_get_setting($colorname);
-
-    $hex = [hexdec(substr($color, 1, 2)), hexdec(substr($color, 3, 2)), hexdec(substr($color, 5, 2))];
-    return implode(",", $hex);
-}
-
-/**
- * Serves CSS for image file updated to styles.
+ * Inject additional SCSS.
  *
- * @param string $filename
- */
-function theme_boost_training_serve_css($filename) {
-    global $CFG;
-    if (!empty($CFG->themedir)) {
-        $thestylepath = $CFG->themedir . '/boost_training/style/';
-    } else {
-        $thestylepath = $CFG->dirroot . '/theme/boost_training/style/';
-    }
-
-    $thesheet = $thestylepath . $filename;
-    $etagfile = md5_file($thesheet);
-    // File.
-    $lastmodified = filemtime($thesheet);
-    // Header.
-    $ifmodifiedsince = (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) ? $_SERVER['HTTP_IF_MODIFIED_SINCE'] : false);
-    $etagheader = (isset($_SERVER['HTTP_IF_NONE_MATCH']) ? trim($_SERVER['HTTP_IF_NONE_MATCH']) : false);
-
-    if ((($ifmodifiedsince) && (strtotime($ifmodifiedsince) == $lastmodified)) || $etagheader == $etagfile) {
-        theme_boost_training_send_unmodified($lastmodified, $etagfile);
-    }
-    theme_boost_training_send_cached_css($thestylepath, $filename, $lastmodified, $etagfile);
-}
-
-/**
- * Set browser cache used in php header.
- *
- * @param string $lastmodified
- * @param string $etag
- */
-function theme_boost_training_send_unmodified($lastmodified, $etag) {
-    $lifetime = 60 * 60 * 24 * 60;
-    header('HTTP/1.1 304 Not Modified');
-    header('Expires: ' . gmdate('D, d M Y H:i:s', time() + $lifetime) . ' GMT');
-    header('Cache-Control: public, max-age=' . $lifetime);
-    header('Content-Type: text/css; charset=utf-8');
-    header('Etag: "' . $etag . '"');
-    if ($lastmodified) {
-        header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $lastmodified) . ' GMT');
-    }
-    die;
-}
-
-/**
- * Cached css.
- *
- * @param string $path
- * @param string $filename
- * @param integer $lastmodified
- * @param string $etag
- */
-function theme_boost_training_send_cached_css($path, $filename, $lastmodified, $etag) {
-    global $CFG;
-    require_once($CFG->dirroot . '/lib/configonlylib.php');
-    // For min_enable_zlib_compression.
-    // 60 days only - the revision may get incremented quite often.
-    $lifetime = 60 * 60 * 24 * 60;
-
-    header('Etag: "' . $etag . '"');
-    header('Content-Disposition: inline; filename="' . $filename . '"');
-    header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $lastmodified) . ' GMT');
-    header('Expires: ' . gmdate('D, d M Y H:i:s', time() + $lifetime) . ' GMT');
-    header('Pragma: ');
-    header('Cache-Control: public, max-age=' . $lifetime);
-    header('Accept-Ranges: none');
-    header('Content-Type: text/css; charset=utf-8');
-    if (!min_enable_zlib_compression()) {
-        header('Content-Length: ' . filesize($path . $filename));
-    }
-
-    readfile($path . $filename);
-    die;
-}
-
-/**
- * Returns an object containing HTML for the areas affected by settings.
- * Do not add Clean specific logic in here, child themes should be able to
- * rely on that function just by declaring settings with similar names.
- *
- * @param renderer_base $output Pass in $OUTPUT.
- * @param moodle_page $page Pass in $PAGE.
- * @return stdClass An object with the following properties:
- *      - navbarclass A CSS class to use on the navbar. By default ''.
- *      - heading HTML to use for the heading. A logo if one is selected or the default heading.
- *      - footer_description HTML to use as a footer_description. By default ''.
- * @throws coding_exception
- */
-function theme_boost_training_get_html_for_settings(renderer_base $output, moodle_page $page) {
-    global $CFG;
-    $return = new stdClass;
-
-    $return->navbarclass = '';
-    if (!empty($page->theme->settings->invert)) {
-        $return->navbarclass .= ' navbar-inverse';
-    }
-
-    if (!empty($page->theme->settings->logo)) {
-        $return->heading = html_writer::link($CFG->wwwroot, '', ['title' => get_string('home'), 'class' => 'logo']);
-    } else {
-        $return->heading = $output->page_heading();
-    }
-
-    $return->footer_description = '';
-    if (!empty($page->theme->settings->footer_description)) {
-        $return->footer_description = '<div class="footer_description text-center">';
-        $return->footer_description .= format_text($page->theme->settings->footer_description) . '</div>';
-    }
-
-    return $return;
-}
-
-/**
- * Logo Image URL Fetch from theme settings
- *
- * @param string $local
- * @return string $logo
- * @throws dml_exception
- */
-function theme_boost_training_get_logo($local = null) {
-    global $SITE;
-
-    $logocolor = get_config('theme_boost_training', 'logo_color');
-    $logowrite = get_config('theme_boost_training', 'logo_write');
-    if (empty($logocolor)) {
-        return "<span>{$SITE->shortname}</span>";
-    }
-
-    $urllogocolor = moodle_url::make_pluginfile_url(context_system::instance()->id, 'theme_boost_training', 'logo_color', '',
-        theme_get_revision(), $logocolor);
-    $urllogowrite = moodle_url::make_pluginfile_url(context_system::instance()->id, 'theme_boost_training', 'logo_write', '',
-        theme_get_revision(), $logowrite);
-
-    if ($urllogocolor) {
-        if ($urllogowrite) {
-            return "
-                <img class='logo-color' src='{$urllogocolor->out(false)}' alt='{$SITE->fullname}'>
-                <img class='logo-write' src='{$urllogowrite->out(false)}' alt='{$SITE->fullname}'>";
-        } else {
-            return "<img class='logo-all' src='{$urllogocolor->out(false)}' alt='{$SITE->fullname}'>";
-        }
-    } else {
-        return "<span>{$SITE->shortname}</span>";
-    }
-}
-
-/**
- * theme_boost_training_get_body_class
- *
- * @return string
- * @throws coding_exception
- */
-function theme_boost_training_get_body_class() {
-    return "theme-" . theme_boost_training_get_setting("background_color", false);
-}
-
-/**
- * Functions helps to get the admin config values which are related to the
- * theme
- *
- * @param string $setting
- * @param bool $format
- * @return bool
- * @throws coding_exception
- */
-function theme_boost_training_get_setting($setting, $format = true) {
-    global $CFG;
-
-    require_once($CFG->dirroot . '/lib/weblib.php');
-    static $theme;
-    if (empty($theme)) {
-        $theme = theme_config::load('boost_training');
-    }
-
-    if (empty($theme->settings->$setting)) {
-        return false;
-    } else if ($format === true) {
-        return format_string($theme->settings->$setting);
-    } else if ($format === FORMAT_PLAIN) {
-        return format_text($theme->settings->$setting, FORMAT_PLAIN);
-    } else if ($format === FORMAT_HTML) {
-        return format_text($theme->settings->$setting, FORMAT_HTML);
-    } else {
-        return $theme->settings->$setting;
-    }
-}
-
-/**
- * Renderer the slider images.
- *
- * @param string $imagesetting
- * @return string
- * @throws coding_exception
- * @throws dml_exception
- */
-function theme_boost_training_get_setting_image($imagesetting) {
-    if (theme_boost_training_get_setting($imagesetting)) {
-        $imagesettingurl = theme_boost_training_setting_file_url($imagesetting, $imagesetting);
-    }
-    if (empty($imagesettingurl)) {
-        $imagesettingurl = '';
-    }
-
-    return $imagesettingurl;
-}
-
-/**
- * theme_boost_training_setting_file_url
- *
- * @param string $setting
- * @param string $filearea
- * @return moodle_url|null
- * @throws dml_exception
- */
-function theme_boost_training_setting_file_url($setting, $filearea) {
-    global $CFG, $PAGE;
-
-    if (empty($PAGE->theme->settings->$setting)) {
-        return null;
-    }
-
-    $itemid = theme_get_revision();
-    $filepath = $PAGE->theme->settings->$setting;
-    $syscontext = context_system::instance();
-
-    $url = moodle_url::make_file_url(
-        "$CFG->wwwroot/pluginfile.php",
-        "/{$syscontext->id}/theme_boost_training/{$filearea}/{$itemid}{$filepath}");
-
-    return $url;
-}
-
-/**
- * Return the current theme url
+ * @param theme_config $theme The theme config object.
  *
  * @return string
  */
-function theme_boost_training_theme_url() {
-    global $CFG, $PAGE;
-    $themeurl = $CFG->wwwroot . '/theme/' . $PAGE->theme->name;
-    return $themeurl;
-}
+function theme_boost_training_get_extra_scss($theme) {
+    $content = "";
+    $imageurl = $theme->setting_file_url("backgroundimage", "backgroundimage");
 
-/**
- * Display Footer Block Custom Links
- *
- * @param string $menuname Footer block link name.
- * @return string The Footer links are return.
- * @throws coding_exception
- * @throws moodle_exception
- */
-function theme_boost_training_generate_links($menuname = '') {
-    $htmlstr = '';
-    $menustr = theme_boost_training_get_setting($menuname);
-    $menusettings = explode("\n", $menustr);
-    foreach ($menusettings as $menukey => $menuval) {
-        $expset = explode("|", $menuval);
-        if (!empty($expset) && isset($expset[0]) && isset($expset[1])) {
-            list($ltxt, $lurl) = $expset;
-            $ltxt = trim($ltxt);
-            $lurl = trim($lurl);
-            if (empty($ltxt)) {
-                continue;
-            }
-            if (empty($lurl)) {
-                $lurl = 'javascript:void(0);';
-            }
-
-            $pos = strpos($lurl, 'http');
-            if ($pos === false) {
-                $lurl = new moodle_url($lurl);
-            }
-            $htmlstr .= '<li><a href="' . $lurl . '">' . $ltxt . '</a></li>' . "\n";
-        }
-    }
-    return $htmlstr;
-}
-
-/**
- * Fetch the hide course ids
- *
- * @return array
- * @throws dml_exception
- */
-function theme_boost_training_hidden_courses_ids() {
-    global $DB;
-    $hcourseids = [];
-    $result = $DB->get_records_sql("SELECT id FROM {course} WHERE visible='0' ");
-    if (!empty($result)) {
-        foreach ($result as $row) {
-            $hcourseids[] = $row->id;
-        }
-    }
-    return $hcourseids;
-}
-
-/**
- * Remove the html special tags from course content.
- * This function used in course home page.
- *
- * @param string $text
- * @return string
- */
-function theme_boost_training_strip_html_tags($text) {
-    $text = preg_replace(
-        [
-            // Remove invisible content.
-            '@<head[^>]*?>.*?</head>@siu',
-            '@<style[^>]*?>.*?</style>@siu',
-            '@<script[^>]*?.*?</script>@siu',
-            '@<object[^>]*?.*?</object>@siu',
-            '@<embed[^>]*?.*?</embed>@siu',
-            '@<applet[^>]*?.*?</applet>@siu',
-            '@<noframes[^>]*?.*?</noframes>@siu',
-            '@<noscript[^>]*?.*?</noscript>@siu',
-            '@<noembed[^>]*?.*?</noembed>@siu',
-            // Add line breaks before and after blocks.
-            '@</?((address)|(blockquote)|(center)|(del))@iu',
-            '@</?((div)|(h[1-9])|(ins)|(isindex)|(p)|(pre))@iu',
-            '@</?((dir)|(dl)|(dt)|(dd)|(li)|(menu)|(ol)|(ul))@iu',
-            '@</?((table)|(th)|(td)|(caption))@iu',
-            '@</?((form)|(button)|(fieldset)|(legend)|(input))@iu',
-            '@</?((label)|(select)|(optgroup)|(option)|(textarea))@iu',
-            '@</?((frameset)|(frame)|(iframe))@iu',
-        ],
-        [
-            ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-            "\n\$0", "\n\$0", "\n\$0", "\n\$0", "\n\$0", "\n\$0",
-            "\n\$0", "\n\$0",
-        ],
-        $text
-    );
-    return strip_tags($text);
-}
-
-/**
- * Cut the Course content.
- *
- * @param string $str
- * @param integer $n
- * @param string $endchar
- * @return string $out
- */
-function theme_boost_training_course_trim_char($str, $n = 500, $endchar = '&#8230;') {
-    if (strlen($str) < $n) {
-        return $str;
+    // Sets the background image, and its settings.
+    if (!empty($imageurl)) {
+        $content .= "
+            @media (min-width: 768px) {
+                body {
+                    background-image: url('$imageurl'); background-size: cover;
+                 }
+             }";
     }
 
-    $str = preg_replace("/\s+/", ' ', str_replace(["\r\n", "\r", "\n"], ' ', $str));
-    if (strlen($str) <= $n) {
-        return $str;
+    // Sets the login background image.
+    $loginbackgroundimageurl = $theme->setting_file_url("loginbackgroundimage", "loginbackgroundimage");
+    if (!empty($loginbackgroundimageurl)) {
+        $content .= "
+            body.pagelayout-login #page {
+                background-image: url('$loginbackgroundimageurl'); background-size: cover;
+            }";
     }
 
-    $small = substr($str, 0, $n);
-    $out = $small . $endchar;
-    return $out;
-}
-
-/**
- * Function returns the rgb format with the combination of passed color hex and opacity.
- *
- * @param string $hexa
- * @param int $opacity
- * @return string
- */
-function theme_boost_training_get_hexa($hexa, $opacity) {
-    if (!empty($hexa)) {
-        list($r, $g, $b) = sscanf($hexa, "#%02x%02x%02x");
-        if ($opacity == '') {
-            $opacity = 0.0;
-        } else {
-            $opacity = $opacity / 10;
-        }
-        return "rgba($r, $g, $b, $opacity)";
-    }
-
-    return "";
-}
-
-/**
- * theme_boost_training_coursemodule_standard_elements
- *
- * @param moodleform_mod $data The moodle quickforms wrapper object.
- * @param MoodleQuickForm $mform The actual form object (required to modify the form).
- * @throws coding_exception
- * @throws dml_exception
- */
-function theme_boost_training_coursemodule_standard_elements($data, $mform) {
-    global $CFG;
-
-    if ($CFG->theme == "boost_training") {
-        $mform->addElement('header', 'theme_boost_training_icons',
-            get_string('settings_icons_change_icons', 'theme_boost_training'));
-        $configuration = get_string('configuration');
-        $link = "<a href='{$CFG->wwwroot}/admin/settings.php?section=themesettingboost_training#theme_boost_training_icons'
-                target='_blank'>{$configuration}</a>";
-
-        if ($settingsiconsnum = get_config('theme_boost_training', 'settings_icons_num')) {
-
-            $choices = [0 => get_string("settings_icons_none", 'theme_boost_training')];
-            for ($i = 1; $i <= $settingsiconsnum; $i++) {
-                $name = get_config('theme_boost_training', "settings_icons_name_{$i}");
-                $image = get_config('theme_boost_training', "settings_icons_image_{$i}");
-
-                if ($name && $image) {
-                    $choices[$i] = $name;
-                }
-            }
-
-            if ($data->get_coursemodule() && isset($data->get_coursemodule()->id)) {
-                $name = "theme_boost_training_customicon_{$data->get_coursemodule()->id}";
-                $customicon = get_config('theme_boost_training', $name);
-
-                $data->set_data(['theme_boost_training_customicon' => $customicon]);
-            }
-
-            $mform->addElement('select', 'theme_boost_training_customicon',
-                get_string('settings_icons_select_icon', 'theme_boost_training', $link),
-                $choices);
-        } else {
-            $mform->addElement('html', get_string('settings_icons_module_disable', 'theme_boost_training', $link));
-        }
-    }
-}
-
-/**
- * Hook the add/edit of the course module.
- *
- * @param moodleform $data Data from the form submission.
- * @param stdClass $course The course.
- * @return moodleform
- * @throws dml_exception
- */
-function theme_boost_training_coursemodule_edit_post_actions($data, $course) {
-    return $data;
+    // Always return the background image with the scss when we have it.
+    return !empty($theme->settings->scss) ? "{$theme->settings->scss}  \n  {$content}" : $content;
 }
 
 /**
@@ -498,190 +77,312 @@ function theme_boost_training_coursemodule_edit_post_actions($data, $course) {
  * @param array $args
  * @param bool $forcedownload
  * @param array $options
+ *
  * @return bool
- * @throws coding_exception
  * @throws moodle_exception
  */
 function theme_boost_training_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
-    static $theme;
-
-    if (empty($theme)) {
-        $theme = theme_config::load('boost_training');
-    }
     if ($context->contextlevel == CONTEXT_SYSTEM) {
-        if ($filearea === 'style') {
-            theme_boost_training_serve_css($args[1]);
-        } else if ($filearea === 'editor_home' || $filearea === 'editor_footer') {
-            $fullpath = sha1("/{$context->id}/theme_boost_training/{$filearea}/{$args[0]}/{$args[1]}");
-            $fs = get_file_storage();
-            if ($file = $fs->get_file_by_hash($fullpath)) {
-                return send_stored_file($file, 0, 0, false, $options);
-            }
-            send_file_not_found();
-        } else if ($filearea === 'pagebackground') {
-            return $theme->setting_file_serve('pagebackground', $args, $forcedownload, $options);
-        } else if (preg_match("/slide[1-9][0-9]*image/", $filearea) !== false) {
-            return $theme->setting_file_serve($filearea, $args, $forcedownload, $options);
-        } else {
-            send_file_not_found();
+        $theme = theme_config::load("boost_training");
+        // By default, theme files must be cache-able by both browsers and proxies.
+        if (!array_key_exists("cacheability", $options)) {
+            $options["cacheability"] = "public";
+        }
+        return $theme->setting_file_serve($filearea, $args, $forcedownload, $options);
+    } else if ($context->contextlevel == CONTEXT_MODULE) {
+        $fullpath = sha1("/{$context->id}/theme_boost_training/{$filearea}/{$args[0]}/{$args[1]}");
+        $fs = get_file_storage();
+        if ($file = $fs->get_file_by_hash($fullpath)) {
+            return send_stored_file($file, 0, 0, false, $options);
         }
     } else {
         send_file_not_found();
     }
-
-    return false;
 }
 
 /**
- * Loads the CSS Styles and replace the background images.
- * If background image not available in the settings take the default images.
+ * Get the current user preferences that are available
  *
- * @param string $css
- * @param string $theme
- * @return string $css
+ * @return array[]
+ */
+function theme_boost_training_user_preferences(): array {
+    return [
+        "drawer-open-block" => [
+            "type" => PARAM_BOOL,
+            "null" => NULL_NOT_ALLOWED,
+            "default" => false,
+            "permissioncallback" => [core_user::class, "is_current_user"],
+        ],
+        "drawer-open-index" => [
+            "type" => PARAM_BOOL,
+            "null" => NULL_NOT_ALLOWED,
+            "default" => true,
+            "permissioncallback" => [core_user::class, "is_current_user"],
+        ],
+    ];
+}
+
+/**
+ * Returns the main SCSS content.
+ *
+ * @param theme_config $theme The theme config object.
+ *
+ * @return string
+ */
+function theme_boost_training_get_main_scss_content($theme) {
+    global $CFG;
+    return file_get_contents("{$CFG->dirroot}/theme/boost_training/scss/style.scss");
+}
+
+/**
+ * Get compiled css.
+ *
+ * @return string compiled css
+ */
+function theme_boost_training_get_precompiled_css() {
+    global $CFG;
+    return file_get_contents("{$CFG->dirroot}/theme/boost_training/scss/style.css");
+}
+
+/**
+ * Get SCSS to prepend.
+ *
+ * @param theme_config $theme The theme config object.
+ *
+ * @return string
+ */
+function theme_boost_training_get_pre_scss($theme) {
+    $scss = "";
+    $configurable = [
+        // Config key => [variableName, ...].
+        "brandcolor" => ["primary"],
+    ];
+
+    // Prepend variables first.
+    foreach ($configurable as $configkey => $targets) {
+        $value = isset($theme->settings->{$configkey}) ? $theme->settings->{$configkey} : null;
+        if (empty($value)) {
+            continue;
+        }
+        array_map(function ($target) use (&$scss, $value) {
+            $scss .= "\${$target}: {$value};\n";
+        }, (array)$targets);
+    }
+
+    // Prepend pre-scss.
+    if (!empty($theme->settings->scsspre)) {
+        $scss .= $theme->settings->scsspre;
+    }
+
+    return $scss;
+}
+
+/**
+ * theme_boost_training_coursemodule_standard_elements
+ *
+ * @param moodleform_mod $formwrapper The moodle quickforms wrapper object.
+ * @param MoodleQuickForm $mform      The actual form object (required to modify the form).
+ *
  * @throws coding_exception
+ */
+function theme_boost_training_coursemodule_standard_elements(&$formwrapper, $mform) {
+    if ($formwrapper->get_current()->modulename == "label") {
+        return;
+    }
+    if ($formwrapper->get_current()->modulename == "learningmap") {
+        return;
+    }
+
+    global $CFG, $PAGE;
+    if ($CFG->theme == "boost_training") {
+
+        // Icones.
+        $mform->addElement("header", "theme_boost_training_icons",
+            get_string("settings_icons_change_icons", "theme_boost_training"));
+
+        $filemanageroptions = [
+            "accepted_types" => [".svg", ".png", ".jpg", ".jpeg"],
+            "maxbytes" => -1,
+            "maxfiles" => 1,
+        ];
+
+        // Background.
+        if (isset($formwrapper->get_current()->coursemodule) && $formwrapper->get_current()->coursemodule) {
+            $context = context_module::instance($formwrapper->get_current()->coursemodule);
+
+            $draftitemid = file_get_submitted_draft_itemid("theme_boost_training_customimage");
+            file_prepare_draft_area(
+                $draftitemid,
+                $context->id,
+                "theme_boost_training", "theme_boost_training_customimage", $formwrapper->get_current()->coursemodule);
+
+            $formwrapper->set_data([
+                "theme_boost_training_customimage" => $draftitemid,
+            ]);
+        }
+        $mform->addElement("filemanager", "theme_boost_training_customimage",
+            get_string("settings_icons_upload_image", "theme_boost_training"),
+            null, $filemanageroptions);
+
+        $mform->addElement("static", "theme_boost_training_custom", "",
+            get_string("settings_icons_upload_image_desc", "theme_boost_training"));
+
+        // Icon.
+        if (isset($formwrapper->get_current()->coursemodule) && $formwrapper->get_current()->coursemodule) {
+            $context = context_module::instance($formwrapper->get_current()->coursemodule);
+
+            $draftitemid = file_get_submitted_draft_itemid("theme_boost_training_customicon");
+            file_prepare_draft_area(
+                $draftitemid,
+                $context->id,
+                "theme_boost_training", "theme_boost_training_customicon", $formwrapper->get_current()->coursemodule);
+
+            $formwrapper->set_data([
+                "theme_boost_training_customicon" => $draftitemid,
+            ]);
+        }
+        $filemanageroptions["accepted_types"] = [".svg", ".png"];
+        $mform->addElement("filemanager", "theme_boost_training_customicon",
+            get_string("settings_icons_upload_icon", "theme_boost_training"),
+            null, $filemanageroptions);
+
+        // Color.
+        $mform->addElement("text", "theme_boost_training_customcolor",
+            get_string("settings_icons_color_icon", "theme_boost_training"), []);
+        $mform->setType("theme_boost_training_customcolor", PARAM_TEXT);
+        $PAGE->requires->js_call_amd("theme_boost_training/settings", "minicolors", ["id_theme_boost_training_customcolor"]);
+
+        $mform->addElement("static", "theme_boost_training_custom", "",
+            get_string("settings_icons_color_icon_desc", "theme_boost_training"));
+    }
+}
+
+/**
+ * Hook the add/edit of the course module.
+ *
+ * @param moodleform $data Data from the form submission.
+ * @param stdClass $course The course.
+ *
+ * @return moodleform
+ *
+ * @throws coding_exception
+ */
+function theme_boost_training_coursemodule_edit_post_actions($data, $course) {
+    $context = context_module::instance($data->coursemodule);
+
+    if (isset($data->theme_boost_training_customimage)) {
+        $options = ["subdirs" => true, "embed" => true];
+        $filesave = file_save_draft_area_files(
+            $data->theme_boost_training_customimage,
+            $context->id,
+            "theme_boost_training", "theme_boost_training_customimage", $data->coursemodule,
+            $options);
+
+        $name = "theme_boost_training_customimage_{$data->coursemodule}";
+        set_config($name, $filesave, "theme_boost_training");
+
+        \cache::make("theme_boost_training", "css_cache")->purge();
+    }
+
+    if (isset($data->theme_boost_training_customicon)) {
+        $options = ["subdirs" => true, "embed" => true];
+        $filesave = file_save_draft_area_files(
+            $data->theme_boost_training_customicon,
+            $context->id,
+            "theme_boost_training", "theme_boost_training_customicon", $data->coursemodule,
+            $options);
+
+        $name = "theme_boost_training_customicon_{$data->coursemodule}";
+        set_config($name, $filesave, "theme_boost_training");
+
+        \cache::make("theme_boost_training", "css_cache")->purge();
+    }
+
+    if (isset($data->theme_boost_training_customcolor)) {
+        $name = "theme_boost_training_customcolor_{$data->coursemodule}";
+        set_config($name, $data->theme_boost_training_customcolor, "theme_boost_training");
+
+        \cache::make("theme_boost_training", "css_cache")->purge();
+    }
+
+    return $data;
+}
+
+/**
+ * Function theme_boost_training_progress_content
+ *
+ * @return array
+ */
+function theme_boost_training_progress_content() {
+    global $USER, $COURSE;
+
+    $completion = new \completion_info($COURSE);
+
+    // First, let's make sure completion is enabled.
+    if (!$completion->is_enabled()) {
+        return ["isprogress" => false];
+    }
+
+    if (!$completion->is_tracked_user($USER->id)) {
+        return ["isprogress" => false];
+    }
+
+    // Before we check how many modules have been completed see if the course has.
+    if ($completion->is_course_complete($USER->id)) {
+        return [
+            "isprogress" => true,
+            "progress" => 100,
+        ];
+    }
+
+    // Get the number of modules that support completion.
+    $modules = $completion->get_activities();
+    $count = count($modules);
+    if (!$count) {
+        return ["isprogress" => false];
+    }
+
+    // Get the number of modules that have been completed.
+    $completed = 0;
+    foreach ($modules as $module) {
+        $data = $completion->get_data($module, true, $USER->id);
+        if (($data->completionstate == COMPLETION_INCOMPLETE) || ($data->completionstate == COMPLETION_COMPLETE_FAIL)) {
+            $completed += 0;
+        } else {
+            $completed += 1;
+        };
+    }
+
+    return [
+        "isprogress" => true,
+        "progress" => intval(($completed / $count) * 100),
+        "progress_completed" => $completed,
+        "progress_count" => $count,
+    ];
+}
+
+/**
+ * Function theme_boost_training_setting_file_url
+ *
+ * @param $setting
+ *
+ * @return bool|\core\url
+ *
  * @throws dml_exception
  */
-function theme_boost_training_process_css($css, $theme) {
-    global $DB;
-
-    // Import site fonts.
-    $fontimport = \theme_boost_training\fonts\font_util::css('sitefonts');
-    $css = "@import url('{$fontimport}');\n{$css}";
-
-    // Local css.
-    if (@file_exists(__DIR__ . "/style/boost_training.css")) {
-        $customcss = file_get_contents(__DIR__ . "/style/boost_training.css");
-
-        $css = "{$css}\n{$customcss}";
-    }
-
-    // Color list.
-    $css =
-        ":root {\n" .
-        "    --color_primary:   " . theme_boost_training_process_color_hex("theme_color__color_primary") . " !important;\n" .
-        "    --color_secondary: " . theme_boost_training_process_color_hex("theme_color__color_secondary") . " !important;\n" .
-        "    --color_buttons:   " . theme_boost_training_process_color_hex("theme_color__color_buttons") . " !important;\n" .
-        "    --color_names:     " . theme_boost_training_process_color_hex("theme_color__color_names") . " !important;\n" .
-        "    --color_titles:    " . theme_boost_training_process_color_hex("theme_color__color_titles") . " !important;\n" .
-        "}" . $css;
-
-    // Custom CSS.
-    $customcss = str_replace("&gt;", ">", theme_boost_training_get_setting("customcss"));
-    $css = "{$css}\n{$customcss}";
-
-    // Icons modules.
-    $sql = "SELECT name, value  FROM {config_plugins} WHERE name LIKE 'theme_boost_training_customicon_%'";
-    $customicons = $DB->get_records_sql($sql);
-    foreach ($customicons as $customicon) {
-        $moduleid = str_replace("theme_boost_training_customicon_", "", $customicon->name);
-        $slideshowimage = theme_boost_training_get_setting_image("settings_icons_image_{$customicon->value}");
-        $css .= "
-            #module-{$moduleid} .courseicon img,
-            .cmid-{$moduleid} #page-header .activityiconcontainer img {
-                content : url('{$slideshowimage}');
-            }
-            #course-index-cm-{$moduleid} .courseindex-link {
-                display     : flex;
-                align-items : center;
-            }
-            #course-index-cm-{$moduleid} .courseindex-link::before {
-                content           : '';
-                display           : block;
-                height            : 20px;
-                width             : 20px;
-                min-width         : 20px;
-                background-image  : url('{$slideshowimage}');
-                background-size   : contain;
-                background-repeat : no-repeat;
-                margin-right      : 5px;
-            }
-            #course-index-cm-{$moduleid}.pageitem .courseindex-link::before {
-                filter: invert(1);
-            }
-            #course-index-cm-{$moduleid}.pageitem:hover .courseindex-link::before {
-                filter: invert(0);
-            }";
-    }
-
-    // Color on roll page.
+function theme_boost_training_setting_file_url($setting) {
     global $CFG;
-    if ($CFG->theme != "boost_training") {
-        $topscrollbackgroundcolor = theme_boost_training_get_setting("top_scroll_background_color");
-        $topscrolltextcolor = theme_boost_training_get_setting("top_scroll_text_color");
 
-        $css .= "
-            .fixed-top .header-menubar .navbar-nav .simplesearchform .btn-open,
-            #header.fixed-top  .popover-region .popover-region-toggle i.icon,
-            .fixed-top .header-menubar .navbar-nav .usermenu .dropdown a#user-menu-toggle,
-            .fixed-top .header-menubar .navbar-nav .editmode-switch-form .input-group label,
-            .fixed-top .usermenu .moodle-actionmenu a.dropdown-toggle,
-            .navbar-light.fixed-top .navbar-nav .show>.nav-link,
-            .navbar-light.fixed-top .navbar-nav .active>.nav-link,
-            .navbar-light.fixed-top .navbar-nav .nav-link.show,
-            .navbar-light.fixed-top .navbar-nav .nav-link.active,
-            .fixed-top .header-logo a.navbar-brand img,
-            .fixed-top .header-logo a.navbar-brand span,
-            .fixed-top .header-menubar .primary-navigation ul.navbar-nav > li > a {
-                color: {$topscrolltextcolor} !important;
-            }
-            .fixed-top .custom-switch .custom-control-label:after{
-                background: {$topscrolltextcolor} !important;
-            }
-            .fixed-top {
-                background: {$topscrollbackgroundcolor} !important;
-            }
-            
-            .ever-fixed-top .header-menubar .navbar-nav .simplesearchform .btn-open,
-            #header.ever-fixed-top  .popover-region .popover-region-toggle i.icon,
-            .ever-fixed-top .header-menubar .navbar-nav .usermenu .dropdown a#user-menu-toggle,
-            .ever-fixed-top .header-menubar .navbar-nav .editmode-switch-form .input-group label,
-            .ever-fixed-top .usermenu .moodle-actionmenu a.dropdown-toggle,
-            .navbar-light.ever-fixed-top .navbar-nav .show>.nav-link,
-            .navbar-light.ever-fixed-top .navbar-nav .active>.nav-link,
-            .navbar-light.ever-fixed-top .navbar-nav .nav-link.show,
-            .navbar-light.ever-fixed-top .navbar-nav .nav-link.active,
-            .ever-fixed-top .header-logo a.navbar-brand img,
-            .ever-fixed-top .header-logo a.navbar-brand span,
-            .ever-fixed-top .header-menubar .primary-navigation ul.navbar-nav > li > a {
-                color: {$topscrolltextcolor} !important;
-            }
-            .ever-fixed-top .custom-switch .custom-control-label:after{
-                background: {$topscrolltextcolor} !important;
-            }
-            .ever-fixed-top {
-                background: {$topscrollbackgroundcolor} !important;
-            }";
+    $filepath = get_config("theme_boost_training", $setting);
+    if (!$filepath) {
+        return false;
     }
+    $itemid = theme_get_revision();
+    $syscontext = context_system::instance();
 
-    // Fonts.
-    $fontfamilytext = theme_boost_training_get_setting("fontfamily");
-    $fontfamilytext = isset($fontfamilytext[3]) ? "{$fontfamilytext}," : "";
-    $fontfamilytext = "body,* {font-family:{$fontfamilytext} Arial, Helvetica, sans-serif}";
+    $url = moodle_url::make_file_url(
+        "$CFG->wwwroot/pluginfile.php",
+        "/{$syscontext->id}/theme_boost_training/{$setting}/{$itemid}{$filepath}");
 
-    $fontfamilytitle = theme_boost_training_get_setting("fontfamily_title");
-    $fontfamilytitle = isset($fontfamilytitle[3]) ? "{$fontfamilytitle}," : "";
-    $fontfamilytitle = "h1,h2,h3,h4,h5,h6 {font-family:{$fontfamilytitle} Arial, Helvetica, sans-serif}";
-
-    $fontfamilysitename = theme_boost_training_get_setting("fontfamily_sitename");
-    $fontfamilysitename = isset($fontfamilysitename[3]) ? "{$fontfamilysitename}," : "";
-    $fontfamilysitename = ".header-logo a.navbar-brand span {font-family:{$fontfamilysitename} Arial, Helvetica, sans-serif}";
-
-    $fontfamilymenus = theme_boost_training_get_setting("fontfamily_menus");
-    $fontfamilymenus = isset($fontfamilymenus[3]) ? "{$fontfamilymenus}," : "";
-    $fontfamilymenus = ".header-menubar .primary-navigation ul.navbar-nav li a,
-            .header-menubar .navbar-nav .usermenu .dropdown a#user-menu-toggle,
-            .header-menubar .navbar-nav .editmode-switch-form .input-group label,
-            .usermenu .moodle-actionmenu a.dropdown-toggle,
-            .navbar-light .navbar-nav .show>.nav-link,
-            .navbar-light .navbar-nav .active>.nav-link,
-            .navbar-light .navbar-nav .nav-link.show,
-            .navbar-light .navbar-nav .nav-link.active,
-            .header-logo a.navbar-brand img {
-                font-family : {$fontfamilymenus} Arial, Helvetica, sans-serif
-            }";
-
-    $css = "{$css}\n{$fontfamilytext}\n{$fontfamilytitle}\n{$fontfamilysitename}\n{$fontfamilymenus}";
-
-    return $css;
+    return $url;
 }

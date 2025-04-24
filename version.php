@@ -15,23 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * version.php
+ * Boost Training.
  *
- * This is built using the boost template to allow for new theme's using
- * Moodle's new Boost theme engine
- *
- * @package     theme_boost_training
- * @copyright   2024 Eduardo kraus (http://eduardokraus.com)
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    theme_boost_training
+ * @copyright  2016 Frédéric Massart
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2024061400;
-$plugin->release = '6.2.2';
+$plugin->version =  2025042400;
+$plugin->requires = 2024100100;
+$plugin->release = "8.3.13";
 $plugin->maturity = MATURITY_STABLE;
-$plugin->requires = 2022041900;
 $plugin->component = 'theme_boost_training';
 $plugin->dependencies = [
-    'theme_boost' => 2022041900,
+    "customfield_picture" => 2024100800,
 ];

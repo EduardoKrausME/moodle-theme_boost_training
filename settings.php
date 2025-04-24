@@ -15,38 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * settings.php
+ * Settings file
  *
- * This is built using the boost template to allow for new theme's using
- * Moodle's new Boost theme engine
- *
- * @package     theme_boost_training
- * @copyright   2024 Eduardo kraus (http://eduardokraus.com)
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   theme_boost_training
+ * @copyright 2025 Eduardo Kraus {@link http://eduardokraus.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die;
+
+defined('MOODLE_INTERNAL') || die();
 
 if ($ADMIN->fulltree) {
-    $settings = new theme_boost_admin_settingspage_tabs('themesettingboost_training',
-        get_string('pluginname', 'theme_boost_training'));
+    $settings = new theme_boost_training_admin_settingspage_tabs('themesettingboost_training',
+        get_string('configtitle', 'theme_boost_training'));
 
-    require_once(__DIR__ . "/settings-theme.php");
+    $ADMIN->add('themes', new admin_category('theme_boost_training', get_string('pluginname', 'theme_boost_training')));
 
-    require_once(__DIR__ . "/settings-css.php");
-
-    require_once(__DIR__ . "/settings-icons.php");
-
-    require_once(__DIR__ . "/settings-topo.php");
-
-    require_once(__DIR__ . "/settings-home.php");
-
-    require_once(__DIR__ . "/settings-slideshow.php");
-
-    if (get_config('theme_boost_training', 'home_type') == 0) {
-        require_once(__DIR__ . "/settings-about.php");
-    }
-
-    require_once(__DIR__ . "/settings-footer.php");
-
-    require_once(__DIR__ . "/settings-login.php");
+    require_once("settings/general.php");
+    require_once("settings/userprofile.php");
+    require_once("settings/logos.php");
+    require_once("settings/course.php");
+    require_once("settings/footer.php");
 }
