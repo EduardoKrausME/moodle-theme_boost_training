@@ -152,8 +152,7 @@ class core_hook_output {
                         }\n";
                 }
 
-               // $iconscss = preg_replace('/\s+/s', ' ', $iconscss);
-
+                $iconscss = preg_replace('/\s+/s', ' ', $iconscss);
                 $cache->set($cachekey, $iconscss);
             }
 
