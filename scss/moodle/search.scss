@@ -39,6 +39,9 @@
     .btn {
         padding-left: 0.5rem;
         padding-right: 0.5rem;
+        background: transparent !important;
+        border-color: transparent !important;
+        border-left: 1px solid #86888c9c !important;
     }
     .btn .icon {
         margin: 0;
