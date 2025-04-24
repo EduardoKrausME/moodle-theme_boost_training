@@ -690,7 +690,9 @@ span.editinstructions {
     }
     
     .listing-actions {
-        text-align: center;
+        display: flex;
+        gap: 6px;
+        justify-content: center;
         
         > .moodle-actionmenu {
             display: inline-block;
@@ -955,6 +957,7 @@ span.editinstructions {
         #course-detail {
             width: 100%;
             margin-top: 1em;
+            order: -1;
         }
     }
 }
