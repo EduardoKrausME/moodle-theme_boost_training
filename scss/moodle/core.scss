@@ -142,7 +142,6 @@ button.btn-close,
     &.focus,
     &:focus {
         outline: 0;
-        box-shadow: $input-btn-focus-box-shadow;
     }
     &:focus:hover {
         text-decoration: none;
