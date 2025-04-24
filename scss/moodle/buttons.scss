@@ -68,7 +68,6 @@ p.arrow_button {
     &:focus,
     &.focus {
         outline: $btn-focus-width solid darken($background, 40%);
-        box-shadow: inset 0 0 0 2px $innershadow;
     }
 }
 @each $color, $value in $theme-colors {
