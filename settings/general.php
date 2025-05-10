@@ -26,17 +26,12 @@ defined('MOODLE_INTERNAL') || die;
 
 $page = new admin_settingpage("theme_boost_training_general", get_string("generalsettings", "theme_boost_training"));
 
-// Unaddable blocks.
-// Blocks to be excluded when this theme is enabled in the "Add a block" list: Administration, Navigation, Courses and
-// Section links.
-$default = "navigation,settings,course_list,section_links";
-$setting = new admin_setting_configtext("theme_boost_training/unaddableblocks",
-    get_string("unaddableblocks", "theme_boost_training"),
-    get_string("unaddableblocks_desc", "theme_boost_training"), $default, PARAM_TEXT);
-$page->add($setting);
-
-$setting = new admin_setting_configstoredfile($name, $title, $description, "preset", 0,
-   ["maxfiles" => 20, "accepted_types" => [".scss"]]);
+// We use an empty default value because the default colour should come from the preset.
+$name = 'theme_boost/brandcolor';
+$title = get_string('brandcolor', 'theme_boost');
+$description = get_string('brandcolor_desc', 'theme_boost');
+$setting = new admin_setting_configcolourpicker($name, $title, $description, '');
+$setting->set_updatedcallback('theme_reset_all_caches');
 $page->add($setting);
 
 // Background image setting.
@@ -53,6 +48,15 @@ $title = get_string("loginbackgroundimage", "theme_boost_training");
 $description = get_string("loginbackgroundimage_desc", "theme_boost_training");
 $setting = new admin_setting_configstoredfile($name, $title, $description, "loginbackgroundimage");
 $setting->set_updatedcallback("theme_reset_all_caches");
+$page->add($setting);
+
+// Unaddable blocks.
+// Blocks to be excluded when this theme is enabled in the "Add a block" list: Administration, Navigation, Courses and
+// Section links.
+$default = "navigation,settings,course_list,section_links";
+$setting = new admin_setting_configtext("theme_boost_training/unaddableblocks",
+    get_string("unaddableblocks", "theme_boost_training"),
+    get_string("unaddableblocks_desc", "theme_boost_training"), $default, PARAM_TEXT);
 $page->add($setting);
 
 $settings->add($page);
