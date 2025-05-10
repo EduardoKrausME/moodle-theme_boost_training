@@ -26,6 +26,31 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['acctoolbar_access_declaration'] = 'Declaração de acessibilidade';
+$string['acctoolbar_btn_bright'] = 'Contraste brilhante';
+$string['acctoolbar_btn_cursor_white'] = 'Cursor branco grande';
+$string['acctoolbar_btn_cursor_black'] = 'Cursor preto grande';
+$string['acctoolbar_btn_font_up'] = 'Aumentar texto';
+$string['acctoolbar_btn_font_down'] = 'Diminuir texto';
+$string['acctoolbar_btn_font_readable'] = 'Texto legível';
+$string['acctoolbar_btn_images_titles'] = 'Títulos das imagens';
+$string['acctoolbar_btn_invert'] = 'Inverter contraste';
+$string['acctoolbar_btn_monochrome'] = 'Exibição sem cores';
+$string['acctoolbar_btn_underline_links'] = 'Sublinhar links';
+$string['acctoolbar_btn_underline_headers'] = 'Sublinhar cabeçalhos';
+$string['acctoolbar_btn_open'] = 'Menu de acessibilidade';
+$string['acctoolbar_btn_zoom_in'] = 'Ampliar tela';
+$string['acctoolbar_dyslexic'] = 'Fonte legível para dislexia';
+$string['acctoolbar_content_block_header'] = 'Destaque de conteúdo';
+$string['acctoolbar_contrast_block_header'] = 'Contraste de cores';
+$string['acctoolbar_debug_contacts'] = 'Relatar problema de acessibilidade';
+$string['acctoolbar_disable_animattions'] = 'Bloquear animações';
+$string['acctoolbar_image_without_alt'] = 'Imagem sem texto alternativo';
+$string['acctoolbar_keyboard_root'] = 'Navegação por teclado';
+$string['acctoolbar_reset_all_settings'] = 'Redefinir configurações';
+$string['acctoolbar_text_block_header'] = 'Tamanho do texto';
+$string['acctoolbar_toolbar'] = 'Barra de ferramentas de acessibilidade';
+$string['acctoolbar_zoom_block_header'] = 'Ampliar';
 $string['advancedsettings'] = 'Configurações avançadas';
 $string['backgroundimage'] = 'Imagem de fundo';
 $string['backgroundimage_desc'] = 'A imagem exibida como fundo do site. A imagem de fundo enviada aqui substituirá a imagem de fundo nos arquivos de predefinição do tema.';

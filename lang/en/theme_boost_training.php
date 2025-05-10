@@ -24,6 +24,31 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['acctoolbar_access_declaration'] = 'Accessibility statement';
+$string['acctoolbar_btn_bright'] = 'Bright contrast';
+$string['acctoolbar_btn_cursor_white'] = 'Big white cursor';
+$string['acctoolbar_btn_cursor_black'] = 'Big black cursor';
+$string['acctoolbar_btn_font_up'] = 'Increase text';
+$string['acctoolbar_btn_font_down'] = 'Decrease text';
+$string['acctoolbar_btn_font_readable'] = 'Readable text';
+$string['acctoolbar_btn_images_titles'] = 'Images titles';
+$string['acctoolbar_btn_invert'] = 'Reverse contrast';
+$string['acctoolbar_btn_monochrome'] = 'Uncolored display';
+$string['acctoolbar_btn_underline_links'] = 'Underline links';
+$string['acctoolbar_btn_underline_headers'] = 'Underline headers';
+$string['acctoolbar_btn_open'] = 'Accessibility menu';
+$string['acctoolbar_btn_zoom_in'] = 'Zoom screen';
+$string['acctoolbar_dyslexic'] = 'Dyslexia Legible Font';
+$string['acctoolbar_content_block_header'] = 'Highlighting content';
+$string['acctoolbar_contrast_block_header'] = 'Color contrast';
+$string['acctoolbar_debug_contacts'] = 'Report an accessibility problem';
+$string['acctoolbar_disable_animattions'] = 'Block animations';
+$string['acctoolbar_image_without_alt'] = 'Image without text';
+$string['acctoolbar_keyboard_root'] = 'keyboard navigation';
+$string['acctoolbar_reset_all_settings'] = 'Reset settings';
+$string['acctoolbar_text_block_header'] = 'Text size';
+$string['acctoolbar_toolbar'] = 'Accessibility toolbar';
+$string['acctoolbar_zoom_block_header'] = 'Zoom in';
 $string['advancedsettings'] = 'Advanced settings';
 $string['background_course_image'] = 'Course background image';
 $string['background_course_image_desc'] = 'Sets a background image for the header of all courses. This image will be displayed at the top of the course page and can be individually replaced in the course settings.';

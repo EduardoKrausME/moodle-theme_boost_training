@@ -1,14 +1,17 @@
 /**
  * https://github.com/mickidum/acc_toolbar
  */
-define(["core/templates"], function(Templates) {
+define(["core/templates"], function (Templates) {
     return {
-        init: function() {
+        init: function () {
+            console.log("OK1");
             Templates.render('theme_boost_training/settings/acctoolbar', {})
-                .then(function(html, js) {
+                .then(function (html, js) {
+                    console.log("OK2");
                     window.micAccessTool = new boost_training_AccessTool(html);
                 })
-                .fail(function(ex) {
+                .fail(function (ex) {
+                    console.error(ex);
                 });
         },
     };
@@ -63,7 +66,7 @@ function boost_training_AccessTool(html) {
     this.initialApp();
 }
 
-boost_training_AccessTool.prototype.initialApp = function() {
+boost_training_AccessTool.prototype.initialApp = function () {
 
     window.boost_training_toolboxAppstate = JSON.parse(localStorage.getItem('boost_training_ACCESSTOOL')) || {
         bodyClassList: {},
@@ -120,8 +123,8 @@ boost_training_AccessTool.prototype.initialApp = function() {
     }
 };
 
-boost_training_AccessTool.prototype.initialApp_iframe = function(iframe) {
-    setInterval(function() {
+boost_training_AccessTool.prototype.initialApp_iframe = function (iframe) {
+    setInterval(function () {
         var appstate = JSON.parse(localStorage.getItem('boost_training_ACCESSTOOL')) || {
             bodyClassList: false
         };
@@ -136,7 +139,7 @@ boost_training_AccessTool.prototype.initialApp_iframe = function(iframe) {
     }, 2000);
 };
 
-boost_training_AccessTool.prototype.buildToolBox = function(html) {
+boost_training_AccessTool.prototype.buildToolBox = function (html) {
     if (document.querySelector("body.pagelayout-embedded")) {
         return false;
     }
@@ -150,7 +153,7 @@ boost_training_AccessTool.prototype.buildToolBox = function(html) {
 };
 
 // CONTRAST FUNCTION
-boost_training_AccessTool.prototype.contrastChange = function(event) {
+boost_training_AccessTool.prototype.contrastChange = function (event) {
     event.preventDefault();
 
     if (document.body.classList.contains(this.id)) {
@@ -158,8 +161,7 @@ boost_training_AccessTool.prototype.contrastChange = function(event) {
         document.body.classList.remove(this.id);
 
         delete window.boost_training_toolboxAppstate.bodyClassList[this.id];
-    }
-    else {
+    } else {
         var buttons = document.querySelectorAll('.mic-contrast-block button');
         for (var i = 0; i < buttons.length; i++) {
             buttons[i].classList.remove('vi-enabled');
@@ -176,15 +178,14 @@ boost_training_AccessTool.prototype.contrastChange = function(event) {
 };
 
 // CURSOR CHANGE
-boost_training_AccessTool.prototype.cursorChange = function(event) {
+boost_training_AccessTool.prototype.cursorChange = function (event) {
     event.preventDefault();
 
     if (document.body.classList.contains(this.id)) {
         this.classList.remove('vi-enabled');
         document.body.classList.remove(this.id);
         delete window.boost_training_toolboxAppstate.bodyClassList[this.id];
-    }
-    else {
+    } else {
         var buttons = document.querySelectorAll('#mic-toolbox-cursor-big-black,#mic-toolbox-cursor-big-white');
         for (var i = 0; i < buttons.length; i++) {
             buttons[i].classList.remove('vi-enabled');
@@ -200,7 +201,7 @@ boost_training_AccessTool.prototype.cursorChange = function(event) {
     boost_training_AccessTool.prototype.updateState();
 };
 
-boost_training_AccessTool.prototype.onceButtonChange = function(event) {
+boost_training_AccessTool.prototype.onceButtonChange = function (event) {
     event.preventDefault();
 
     if (this.id === 'mic-toolbox-disable-buttons-keyboard') {
@@ -217,8 +218,7 @@ boost_training_AccessTool.prototype.onceButtonChange = function(event) {
         document.body.classList.remove(this.id);
 
         delete window.boost_training_toolboxAppstate.bodyClassList[this.id];
-    }
-    else {
+    } else {
         this.classList.add('vi-enabled');
         document.body.classList.add(this.id);
 
@@ -227,21 +227,20 @@ boost_training_AccessTool.prototype.onceButtonChange = function(event) {
     boost_training_AccessTool.prototype.updateState();
 };
 
-boost_training_AccessTool.prototype.keyboardRootEnable = function() {
+boost_training_AccessTool.prototype.keyboardRootEnable = function () {
     if (window.boost_training_toolboxAppstate.keyboardRoot) {
         var headers = document.querySelectorAll('h1,h2,h3,h4,h5,h6,p,a,button,input,select,textarea');
         for (var i = 0; i < headers.length; i++) {
             var item = headers[i];
             item.tabIndex = i + 1
         }
-    }
-    else {
+    } else {
         window.location.reload();
     }
 };
 
 // FONTS CHANGE
-boost_training_AccessTool.prototype.fontsChange = function(event) {
+boost_training_AccessTool.prototype.fontsChange = function (event) {
     event.preventDefault();
 
     // var mainBody = Number(document.body.style.fontSize.split('px')[0]);
@@ -284,7 +283,7 @@ boost_training_AccessTool.prototype.fontsChange = function(event) {
 };
 
 // INITIAL FONT SIZE
-boost_training_AccessTool.prototype.initFontsChange = function() {
+boost_training_AccessTool.prototype.initFontsChange = function () {
     var items = document.querySelectorAll('body,h1,h2,h3,h4,h5,h6,p,a,button,input,textarea,li,td,th,strong,span,blockquote,div');
     var initFontSize = window.boost_training_toolboxAppstate.fontSize;
     for (var i = 0; i < items.length; i++) {
@@ -304,7 +303,7 @@ boost_training_AccessTool.prototype.initFontsChange = function() {
     }
 };
 
-boost_training_AccessTool.prototype.initFontsChangeFirst = function() {
+boost_training_AccessTool.prototype.initFontsChangeFirst = function () {
     var items = document.querySelectorAll('body,h1,h2,h3,h4,h5,h6,p,a,button,input,textarea,li,td,th,strong,span,blockquote,div');
     for (var i = 0; i < items.length; i++) {
         var item = items[i];
@@ -314,21 +313,20 @@ boost_training_AccessTool.prototype.initFontsChangeFirst = function() {
     }
 };
 
-boost_training_AccessTool.prototype.getFontsChanges = function(initFontSize) {
+boost_training_AccessTool.prototype.getFontsChanges = function (initFontSize) {
     if (initFontSize > 1) {
         document.getElementById('mic-toolbox-fonts-up').classList.add('vi-font-enabled');
         var initPerc = (Number(initFontSize) * 100 - 100).toFixed();
         var perc = '+' + initPerc + '%';
         document.getElementById('mic-toolbox-fonts-up-enabled').textContent = perc;
-    }
-    else {
+    } else {
         document.getElementById('mic-toolbox-fonts-up').classList.remove('vi-font-enabled');
-        document.getElementById('mic-toolbox-fonts-up-enabled').textContent = '';
+        document.getElementById('mic-toolbox-fonts-up-enabled').textContent = "";
     }
 };
 
 // IMAGES CHANGE
-boost_training_AccessTool.prototype.imagesChange = function() {
+boost_training_AccessTool.prototype.imagesChange = function () {
 
     if (document.body.classList.contains('mic-toolbox-content-images')) {
 
@@ -338,15 +336,13 @@ boost_training_AccessTool.prototype.imagesChange = function() {
             parent.removeChild(titles[i]);
         }
         window.boost_training_toolboxAppstate.imagesTitle = false;
-    }
-
-    else {
+    } else {
         this.imagesAddTitles();
         window.boost_training_toolboxAppstate.imagesTitle = true;
     }
 };
 
-boost_training_AccessTool.prototype.imagesAddTitles = function() {
+boost_training_AccessTool.prototype.imagesAddTitles = function () {
 
     var images = document.images;
     for (var i = 0; i < images.length; i++) {
@@ -356,8 +352,7 @@ boost_training_AccessTool.prototype.imagesAddTitles = function() {
             title.className = 'mic-toolbox-images-titles';
             title.textContent = img.alt;
             img.parentNode.insertBefore(title, img);
-        }
-        else {
+        } else {
             var title = document.createElement('span');
             title.className = 'mic-toolbox-images-titles';
             title.textContent = 'image without text';
@@ -367,9 +362,9 @@ boost_training_AccessTool.prototype.imagesAddTitles = function() {
 
 };
 
-boost_training_AccessTool.prototype.updateState = function() {
+boost_training_AccessTool.prototype.updateState = function () {
     var jsonSting = JSON.stringify(window.boost_training_toolboxAppstate);
-    if (typeof(Storage) !== "undefined") {
+    if (typeof (Storage) !== "undefined") {
         localStorage.setItem('boost_training_ACCESSTOOL', jsonSting);
     } else {
         console.log('No Storage Found');
@@ -377,7 +372,7 @@ boost_training_AccessTool.prototype.updateState = function() {
 };
 
 
-boost_training_AccessTool.prototype.openBox = function(event) {
+boost_training_AccessTool.prototype.openBox = function (event) {
     this.toolBox.classList.add('opened-mic-access-tool');
     if (!window.boost_training_toolboxAppstate.initFontSize || window.boost_training_toolboxAppstate.fontSize <= 1) {
         this.initFontsChangeFirst();
@@ -386,11 +381,11 @@ boost_training_AccessTool.prototype.openBox = function(event) {
     this.toolBoxCloseButton.focus();
 };
 
-boost_training_AccessTool.prototype.closeBox = function(event) {
+boost_training_AccessTool.prototype.closeBox = function (event) {
     this.toolBox.classList.remove('opened-mic-access-tool');
 };
 
-boost_training_AccessTool.prototype.openCloseBoxKeyboard = function(event) {
+boost_training_AccessTool.prototype.openCloseBoxKeyboard = function (event) {
     if (event.keyCode == 27) {
         this.closeBox();
     }
@@ -399,7 +394,7 @@ boost_training_AccessTool.prototype.openCloseBoxKeyboard = function(event) {
     }
 };
 
-boost_training_AccessTool.prototype.resetApp = function(event) {
+boost_training_AccessTool.prototype.resetApp = function (event) {
     localStorage.removeItem('boost_training_ACCESSTOOL');
     window.location.reload();
 };
