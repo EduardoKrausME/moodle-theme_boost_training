@@ -28,6 +28,7 @@
 namespace theme_boost_training\output\core;
 
 use context_course;
+use context_system;
 use html_writer;
 use moodle_url;
 use core_course_category;
@@ -43,8 +44,6 @@ use core_course_list_element;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_renderer extends \core_course_renderer {
-
-    // https://isotope.metafizzy.co/filtering
 
     /**
      * Get Class Function
@@ -66,7 +65,7 @@ class course_renderer extends \core_course_renderer {
 
         $output = "";
 
-        if (isloggedin() and !isguestuser() and isset($CFG->frontpageloggedin)) {
+        if (isloggedin() && !isguestuser() && isset($CFG->frontpageloggedin)) {
             $frontpagelayout = $CFG->frontpageloggedin;
         } else {
             $frontpagelayout = $CFG->frontpage;
@@ -143,7 +142,7 @@ class course_renderer extends \core_course_renderer {
         $chelper->set_attributes(["class" => "frontpage-course-list-all {$this->get_class_row()}"]);
         $courses = core_course_category::top()->get_courses($chelper->get_courses_display_options());
         $totalcount = core_course_category::top()->get_courses_count($chelper->get_courses_display_options());
-        if (!$totalcount && !$this->page->user_is_editing() && has_capability("moodle/course:create", \context_system::instance())) {
+        if (!$totalcount && !$this->page->user_is_editing() && has_capability("moodle/course:create", context_system::instance())) {
             // Print link to create a new course, for the 1st available category.
             return $this->add_new_course_button();
         }
@@ -161,7 +160,7 @@ class course_renderer extends \core_course_renderer {
     public function frontpage_my_courses() {
         global $USER, $CFG, $DB;
 
-        if (!isloggedin() or isguestuser()) {
+        if (!isloggedin() || isguestuser()) {
             return "";
         }
 
@@ -183,13 +182,13 @@ class course_renderer extends \core_course_renderer {
                 $courses = array_slice($courses, 0, $CFG->frontpagecourselimit, true);
                 $chelper->set_courses_display_options([
                     "viewmoreurl" => new moodle_url("/my/courses.php"),
-                    "viewmoretext" => get_string("mycourses")
+                    "viewmoretext" => get_string("mycourses"),
                 ]);
             } else if (core_course_category::top()->is_uservisible()) {
                 // All enrolled courses are displayed, display link to "All courses" if there are more courses in system.
                 $chelper->set_courses_display_options([
                     "viewmoreurl" => new moodle_url("/course/index.php"),
-                    "viewmoretext" => get_string("fulllistofcourses")
+                    "viewmoretext" => get_string("fulllistofcourses"),
                 ]);
                 $totalcount = $DB->count_records("course") - 1;
             }
@@ -198,21 +197,21 @@ class course_renderer extends \core_course_renderer {
             ]);
             $output .= $this->coursecat_courses($chelper, $courses, $totalcount);
 
-            // MNET
+            // MNET.
             if (!empty($rcourses)) {
-                // at the IDP, we know of all the remote courses
+                // At the IDP, we know of all the remote courses.
                 $output .= html_writer::start_tag("div", ["class" => "courses"]);
                 foreach ($rcourses as $course) {
                     $output .= $this->frontpage_remote_course($course);
                 }
-                $output .= html_writer::end_tag("div"); // .courses
+                $output .= html_writer::end_tag("div"); // Courses.
             } elseif (!empty($rhosts)) {
-                // non-IDP, we know of all the remote servers, but not courses
+                // Non-IDP, we know of all the remote servers, but not courses.
                 $output .= html_writer::start_tag("div", ["class" => "courses"]);
                 foreach ($rhosts as $host) {
                     $output .= $this->frontpage_remote_host($host);
                 }
-                $output .= html_writer::end_tag("div"); // .courses
+                $output .= html_writer::end_tag("div"); // Courses.
             }
         }
         return $output;
@@ -234,8 +233,6 @@ class course_renderer extends \core_course_renderer {
      * @throws \Exception
      */
     protected function coursecat_coursebox(coursecat_helper $chelper, $course, $additionalclasses = "") {
-        global $OUTPUT;
-
         if (!isset($this->strings->summary)) {
             $this->strings->summary = get_string("summary");
         }
@@ -246,12 +243,12 @@ class course_renderer extends \core_course_renderer {
             $course = new core_course_list_element($course);
         }
 
-       $icons= $this->course_enrolment_list_icons($course);
+        $icons = $this->course_enrolment_list_icons($course);
 
         $courseimage = \core_course\external\course_summary_exporter::get_course_image($course);
         if (!$courseimage) {
             $coursecontext = context_course::instance($course->id, IGNORE_MISSING);
-            $courseimage = $OUTPUT->get_generated_url_for_course($coursecontext);
+            $courseimage = $this->output->get_generated_url_for_course($coursecontext);
         }
 
         $cardhomemustache = [
@@ -264,7 +261,7 @@ class course_renderer extends \core_course_renderer {
             "enrolment_icons" => $icons,
         ];
 
-        return $OUTPUT->render_from_template("theme_boost_training/core_course/cardhome", $cardhomemustache);
+        return $this->output->render_from_template("theme_boost_training/core_course/cardhome", $cardhomemustache);
     }
 
     /**
@@ -336,7 +333,7 @@ class course_renderer extends \core_course_renderer {
         }
 
         if ($chelper->get_show_courses() == self::COURSECAT_SHOW_COURSES_AUTO) {
-            // In 'auto' course display mode we analyse if number of courses is more or less than $CFG->courseswithsummarieslimit
+            // In 'auto' course display mode we analyse if number of courses is more or less than $CFG->courseswithsummarieslimit.
             if ($totalcount <= $CFG->courseswithsummarieslimit) {
                 $chelper->set_show_courses(self::COURSECAT_SHOW_COURSES_EXPANDED);
             } else {
@@ -344,23 +341,23 @@ class course_renderer extends \core_course_renderer {
             }
         }
 
-        // prepare content of paging bar if it is needed
+        // Prepare content of paging bar if it is needed.
         $paginationurl = $chelper->get_courses_display_option('paginationurl');
         $paginationallowall = $chelper->get_courses_display_option('paginationallowall');
         if ($totalcount > count($courses)) {
-            // there are more results that can fit on one page
+            // There are more results that can fit on one page.
             if ($paginationurl) {
-                // the option paginationurl was specified, display pagingbar
+                // The option paginationurl was specified, display pagingbar.
                 $perpage = $chelper->get_courses_display_option('limit', $CFG->coursesperpage);
                 $page = $chelper->get_courses_display_option('offset') / $perpage;
                 $pagingbar = $this->paging_bar($totalcount, $page, $perpage,
-                    $paginationurl->out(false, array('perpage' => $perpage)));
+                    $paginationurl->out(false, ['perpage' => $perpage]));
                 if ($paginationallowall) {
-                    $pagingbar .= html_writer::tag('div', html_writer::link($paginationurl->out(false, array('perpage' => 'all')),
-                        get_string('showall', '', $totalcount)), array('class' => 'paging paging-showall'));
+                    $pagingbar .= html_writer::tag('div', html_writer::link($paginationurl->out(false, ['perpage' => 'all']),
+                        get_string('showall', '', $totalcount)), ['class' => 'paging paging-showall']);
                 }
             } else if ($viewmoreurl = $chelper->get_courses_display_option('viewmoreurl')) {
-                // the option for 'View more' link was specified, display more link
+                // The option for 'View more' link was specified, display more link.
                 $viewmoretext = $chelper->get_courses_display_option('viewmoretext', get_string('viewmore'));
                 $morelink = html_writer::tag(
                     'div',
@@ -369,12 +366,12 @@ class course_renderer extends \core_course_renderer {
                 );
             }
         } else if (($totalcount > $CFG->coursesperpage) && $paginationurl && $paginationallowall) {
-            // there are more than one page of results and we are in 'view all' mode, suggest to go back to paginated view mode
-            $pagingbar = html_writer::tag('div', html_writer::link($paginationurl->out(false, array('perpage' => $CFG->coursesperpage)),
-                get_string('showperpage', '', $CFG->coursesperpage)), array('class' => 'paging paging-showperpage'));
+            // There are more than one page of results and we are in 'view all' mode, suggest to go back to paginated view mode.
+            $pagingbar = html_writer::tag('div', html_writer::link($paginationurl->out(false, ['perpage' => $CFG->coursesperpage]),
+                get_string('showperpage', '', $CFG->coursesperpage)), ['class' => 'paging paging-showperpage']);
         }
 
-        // display list of courses
+        // Display list of courses.
         $attributes = $chelper->get_and_erase_attributes("courses {$this->get_class_row()}");
         $content = html_writer::start_tag('div', $attributes);
 
@@ -385,7 +382,7 @@ class course_renderer extends \core_course_renderer {
         $coursecount = 0;
         foreach ($courses as $course) {
             $coursecount ++;
-            $classes = ($coursecount%2) ? 'odd' : 'even';
+            $classes = ($coursecount % 2) ? 'odd' : 'even';
             if ($coursecount == 1) {
                 $classes .= ' first';
             }
@@ -402,7 +399,7 @@ class course_renderer extends \core_course_renderer {
             $content .= $morelink;
         }
 
-        $content .= html_writer::end_tag('div'); // .courses
+        $content .= html_writer::end_tag('div'); // Courses.
         return $content;
     }
 

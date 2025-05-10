@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->version = 20250425005;
-$plugin->requires = 2024100100; 
+$plugin->requires = 2024100100;
 $plugin->release = "8.3.13";
 $plugin->maturity = MATURITY_STABLE;
 $plugin->component = 'theme_boost_training';
