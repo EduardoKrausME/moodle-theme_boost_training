@@ -24,8 +24,6 @@
 
 namespace theme_boost_training;
 
-use moodle_url;
-
 /**
  * Class core_hook_output
  *
@@ -36,7 +34,7 @@ class core_hook_output {
     /**
      * Function before_footer_html_generation
      *
-     * @throws \dml_exception
+     * @throws \Exception
      */
     public static function before_footer_html_generation() {
         global $CFG, $DB, $COURSE, $SITE, $PAGE, $OUTPUT;
@@ -74,7 +72,7 @@ class core_hook_output {
                        AND filename  LIKE '__%'";
                 $customicons = $DB->get_records_sql($sql);
                 foreach ($customicons as $customicon) {
-                    $imageurl = moodle_url::make_file_url(
+                    $imageurl = \moodle_url::make_file_url(
                         "{$CFG->wwwroot}/pluginfile.php",
                         implode("/", [
                             "",
@@ -99,7 +97,7 @@ class core_hook_output {
                        AND filename  LIKE '__%'";
                 $customicons = $DB->get_records_sql($sql);
                 foreach ($customicons as $customicon) {
-                    $imageurl = moodle_url::make_file_url(
+                    $imageurl = \moodle_url::make_file_url(
                         "{$CFG->wwwroot}/pluginfile.php",
                         implode("/", [
                             "",

@@ -35,7 +35,7 @@ $blockshtml = $OUTPUT->blocks('side-pre');
 $hasblocks = (strpos($blockshtml, 'data-block=') !== false || !empty($addblockbutton));
 
 $secondarynavigation = false;
-$overflow = '';
+$overflow = "";
 if ($PAGE->has_secondary_navigation()) {
     $tablistnav = $PAGE->has_tablist_secondary_navigation();
     $moremenu = new \core\navigation\output\more_menu($PAGE->secondarynav, 'nav-tabs', true, $tablistnav);

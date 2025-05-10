@@ -75,7 +75,7 @@ class theme_boost_training_admin_settingspage_tabs extends admin_settingpage {
     public function output_html() {
         global $OUTPUT;
 
-        $activetab = optional_param('activetab', '', PARAM_TEXT);
+        $activetab = optional_param('activetab', "", PARAM_TEXT);
         $context = ['tabs' => []];
         $havesetactive = false;
 
@@ -99,7 +99,7 @@ class theme_boost_training_admin_settingspage_tabs extends admin_settingpage {
         }
 
         if (empty($context['tabs'])) {
-            return '';
+            return "";
         }
 
         return $OUTPUT->render_from_template('theme_boost_training/admin_setting_tabs', $context);
