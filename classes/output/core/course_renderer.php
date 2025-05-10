@@ -132,8 +132,7 @@ class course_renderer extends \core_course_renderer {
         global $CFG;
 
         $chelper = new coursecat_helper();
-        $chelper->set_show_courses(self::COURSECAT_SHOW_COURSES_EXPANDED)->
-        set_courses_display_options([
+        $chelper->set_show_courses(self::COURSECAT_SHOW_COURSES_EXPANDED)->set_courses_display_options([
             "recursive" => true,
             "limit" => $CFG->frontpagecourselimit,
             "viewmoreurl" => new moodle_url("/course/index.php"),
@@ -205,7 +204,7 @@ class course_renderer extends \core_course_renderer {
                     $output .= $this->frontpage_remote_course($course);
                 }
                 $output .= html_writer::end_tag("div"); // Courses.
-            } elseif (!empty($rhosts)) {
+            } else if (!empty($rhosts)) {
                 // Non-IDP, we know of all the remote servers, but not courses.
                 $output .= html_writer::start_tag("div", ["class" => "courses"]);
                 foreach ($rhosts as $host) {
