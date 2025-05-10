@@ -8,7 +8,7 @@
         border: 1px solid #d3d5dc;
         border-radius: 8px;
         path {
-            fill: rgb(var(--color_primary));
+            fill: var(--primary);
         }
     }
     a {
@@ -96,7 +96,7 @@
         width: 370px;
         top: 10px;
         left: 10px;
-        background-color: rgb(var(--color_primary));
+        background-color: var(--primary);
         z-index: 9999999;
         visibility: hidden;
         opacity: 0;
