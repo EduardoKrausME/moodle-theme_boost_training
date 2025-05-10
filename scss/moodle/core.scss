@@ -113,8 +113,6 @@ a:not([class]),
     &:focus {
         outline: $btn-focus-width solid transparent;
         color: $gray-900;
-        background-color: lighten($primary, 50%);
-        box-shadow: 0 -#{$btn-focus-width} lighten($primary, 50%), 0 $btn-focus-width $gray-800;
     }
     &:focus:hover {
         text-decoration: none;
@@ -1902,7 +1900,7 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
         z-index: 1000;
         
         &:before {
-            content: '';
+            content: "";
             display: inline-block;
             border-left: 8px solid transparent;
             border-right: 8px solid transparent;
@@ -1913,7 +1911,7 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
         }
         
         &:after {
-            content: '';
+            content: "";
             display: inline-block;
             border-left: 7px solid transparent;
             border-right: 7px solid transparent;

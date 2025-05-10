@@ -1416,6 +1416,7 @@ $divider-hover-color: $primary !default;
         grid-area: visibility;
         .badge {
             font-weight: normal;
+            white-space: break-spaces;
             .icon {
                 font-size: 12px;
                 width: 12px;
@@ -1765,11 +1766,12 @@ $divider-hover-color: $primary !default;
             opacity: 1;
             border-radius: inherit;
         }
+        
         .course-intro-category-name {
             display: inline-block;
             padding: 1px 10px;
             border-radius: 3px;
-            background-color: #5e72e4;
+            background-color: darken($primary, 25%);
             color: #fff;
             text-transform: uppercase;
             font-size: .75rem;

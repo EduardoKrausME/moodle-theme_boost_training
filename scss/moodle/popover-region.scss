@@ -42,7 +42,7 @@ $content-header-footer-height: $region-header-height + $region-footer-height;
     cursor: pointer;
     
     &::before {
-        content: '';
+        content: "";
         display: inline-block;
         border-left: 10px solid transparent;
         border-right: 10px solid transparent;
@@ -53,7 +53,7 @@ $content-header-footer-height: $region-header-height + $region-footer-height;
     }
     
     &::after {
-        content: '';
+        content: "";
         display: inline-block;
         border-left: 9px solid transparent;
         border-right: 9px solid transparent;

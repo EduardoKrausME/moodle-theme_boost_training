@@ -8,7 +8,6 @@ body.format-topics {
             margin-left: 11px;
             border-top: none;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            //overflow: hidden;
             border-radius: 8px;
             transition: transform 0.3s ease;
             padding: 0 0 50px;
@@ -20,16 +19,17 @@ body.format-topics {
                 background-size: cover;
                 background-position: center;
                 border: none;
-                padding: 113% 7px 7px;
+                padding: 50% 7px 7px;
                 border-radius: 8px 8px 0 0;
-                @media (max-width: 575.98px) {
-                    padding: 130px 7px 7px;
-                }
                 .activity-groupmode-info {
                     width: auto;
                     border: none;
                     padding-top: 0;
                     margin-top: 12px;
+                    .groupmode-icon-info {
+                        width: min-content;
+                        display: none;
+                    }
                 }
                 .activity-completion {
                     position: absolute;
@@ -37,7 +37,7 @@ body.format-topics {
                     right: 7px;
                 }
                 .activity-altcontent.activity-description {
-                   display: none;
+                    display: none;
                 }
             }
             .activity-grid {
@@ -63,6 +63,12 @@ body.format-topics {
             }
             @media (max-width: 700px) {
                 width: calc(33.333% - 14px);
+            }
+            @media (max-width: 575px) {
+                width: calc(50% - 14px);
+            }
+            @media (max-width: 360px) {
+                width: calc(100% - 14px);
             }
         }
     }

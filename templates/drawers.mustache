@@ -60,37 +60,37 @@
 {{> theme_boost_training/navbar }}
 {{#courseindex}}
     {{< theme_boost_training/drawer }}
-    {{$id}}theme_boost_training-drawers-courseindex{{/id}}
-{{$drawerheadercontent}}
-{{> theme_boost_training/courseindexdrawercontrols}}
-{{/drawerheadercontent}}
-{{$drawerclasses}}drawer drawer-left {{#courseindexopen}}show{{/courseindexopen}}{{/drawerclasses}}
-{{$drawercontent}}
-{{{courseindex}}}
-{{/drawercontent}}
-{{$drawerpreferencename}}drawer-open-index{{/drawerpreferencename}}
-{{$drawerstate}}show-drawer-left{{/drawerstate}}
-{{$tooltipplacement}}right{{/tooltipplacement}}
-{{$closebuttontext}}{{#str}}closecourseindex, core{{/str}}{{/closebuttontext}}
-{{/ theme_boost_training/drawer}}
+        {{$id}}theme_boost_training-drawers-courseindex{{/id}}
+        {{$drawerheadercontent}}
+        {{> theme_boost_training/courseindexdrawercontrols}}
+        {{/drawerheadercontent}}
+        {{$drawerclasses}}drawer drawer-left {{#courseindexopen}}show{{/courseindexopen}}{{/drawerclasses}}
+        {{$drawercontent}}
+            {{{courseindex}}}
+        {{/drawercontent}}
+        {{$drawerpreferencename}}drawer-open-index{{/drawerpreferencename}}
+        {{$drawerstate}}show-drawer-left{{/drawerstate}}
+        {{$tooltipplacement}}right{{/tooltipplacement}}
+        {{$closebuttontext}}{{#str}}closecourseindex, core{{/str}}{{/closebuttontext}}
+    {{/ theme_boost_training/drawer}}
 {{/courseindex}}
 {{#hasblocks}}
     {{< theme_boost_training/drawer }}
-    {{$id}}theme_boost_training-drawers-blocks{{/id}}
-{{$drawerclasses}}drawer drawer-right{{#blockdraweropen}} show{{/blockdraweropen}}{{/drawerclasses}}
-{{$drawercontent}}
-    <section class="d-print-none" aria-label="{{#str}}blocks{{/str}}">
-        {{{ addblockbutton }}}
-        {{{ sidepreblocks }}}
-    </section>
-{{/drawercontent}}
-{{$drawerpreferencename}}drawer-open-block{{/drawerpreferencename}}
-{{$forceopen}}{{#forceblockdraweropen}}1{{/forceblockdraweropen}}{{/forceopen}}
-{{$drawerstate}}show-drawer-right{{/drawerstate}}
-{{$tooltipplacement}}left{{/tooltipplacement}}
-{{$drawercloseonresize}}1{{/drawercloseonresize}}
-{{$closebuttontext}}{{#str}}closeblockdrawer, core{{/str}}{{/closebuttontext}}
-{{/ theme_boost_training/drawer}}
+        {{$id}}theme_boost_training-drawers-blocks{{/id}}
+        {{$drawerclasses}}drawer drawer-right{{#blockdraweropen}} show{{/blockdraweropen}}{{/drawerclasses}}
+        {{$drawercontent}}
+            <section class="d-print-none" aria-label="{{#str}}blocks{{/str}}">
+                {{{ addblockbutton }}}
+                {{{ sidepreblocks }}}
+            </section>
+        {{/drawercontent}}
+        {{$drawerpreferencename}}drawer-open-block{{/drawerpreferencename}}
+        {{$forceopen}}{{#forceblockdraweropen}}1{{/forceblockdraweropen}}{{/forceopen}}
+        {{$drawerstate}}show-drawer-right{{/drawerstate}}
+        {{$tooltipplacement}}left{{/tooltipplacement}}
+        {{$drawercloseonresize}}1{{/drawercloseonresize}}
+        {{$closebuttontext}}{{#str}}closeblockdrawer, core{{/str}}{{/closebuttontext}}
+    {{/ theme_boost_training/drawer}}
 {{/hasblocks}}
     <div id="page" data-region="mainpage" data-usertour="scroller"
          class="drawers {{#courseindexopen}}show-drawer-left{{/courseindexopen}} {{#blockdraweropen}}show-drawer-right{{/blockdraweropen}} drag-container">

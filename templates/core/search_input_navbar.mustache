@@ -73,13 +73,13 @@
         var submit = container.find('[data-action="submit"]');
 
         submit.on('click', function(e) {
-            if (input.val() === '') {
+            if (input.val() === "") {
                 e.preventDefault();
             }
         });
         container.on('hidden.bs.collapse', function() {
             opensearch.removeClass('d-none');
-            input.val('');
+            input.val("");
         });
         container.on('show.bs.collapse', function() {
             opensearch.addClass('d-none');

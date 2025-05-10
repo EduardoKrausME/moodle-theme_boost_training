@@ -337,7 +337,7 @@ $rb-sortable-list-drag-color: lighten($primary, 40%);
         text-transform: uppercase;
         &::before,
         &::after {
-            content: '';
+            content: "";
             flex: 1;
             border-bottom: 1px solid $report-audience-border-color;
         }

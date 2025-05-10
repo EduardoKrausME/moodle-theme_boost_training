@@ -178,6 +178,86 @@ function theme_boost_training_get_pre_scss($theme) {
 }
 
 /**
+ * Function theme_boost_training_progress_content
+ *
+ * @return array
+ */
+function theme_boost_training_progress_content() {
+    global $USER, $COURSE;
+
+    $completion = new \completion_info($COURSE);
+
+    // First, let's make sure completion is enabled.
+    if (!$completion->is_enabled()) {
+        return ["isprogress" => false];
+    }
+
+    if (!$completion->is_tracked_user($USER->id)) {
+        return ["isprogress" => false];
+    }
+
+    // Before we check how many modules have been completed see if the course has.
+    if ($completion->is_course_complete($USER->id)) {
+        return [
+            "isprogress" => true,
+            "progress" => 100,
+        ];
+    }
+
+    // Get the number of modules that support completion.
+    $modules = $completion->get_activities();
+    $count = count($modules);
+    if (!$count) {
+        return ["isprogress" => false];
+    }
+
+    // Get the number of modules that have been completed.
+    $completed = 0;
+    foreach ($modules as $module) {
+        $data = $completion->get_data($module, true, $USER->id);
+        if (($data->completionstate == COMPLETION_INCOMPLETE) || ($data->completionstate == COMPLETION_COMPLETE_FAIL)) {
+            $completed += 0;
+        } else {
+            $completed += 1;
+        };
+    }
+
+    return [
+        "isprogress" => true,
+        "progress" => intval(($completed / $count) * 100),
+        "progress_completed" => $completed,
+        "progress_count" => $count,
+    ];
+}
+
+/**
+ * Function theme_boost_training_setting_file_url
+ *
+ * @param $setting
+ *
+ * @return bool|\core\url
+ *
+ * @throws dml_exception
+ */
+function theme_boost_training_setting_file_url($setting) {
+    global $CFG;
+
+    $filepath = get_config("theme_boost_training", $setting);
+    if (!$filepath) {
+        return false;
+    }
+    $itemid = theme_get_revision();
+    $syscontext = context_system::instance();
+
+    $url = moodle_url::make_file_url(
+        "$CFG->wwwroot/pluginfile.php",
+        "/{$syscontext->id}/theme_boost_training/{$setting}/{$itemid}{$filepath}");
+
+    return $url;
+}
+
+
+/**
  * theme_boost_training_coursemodule_standard_elements
  *
  * @param moodleform_mod $formwrapper The moodle quickforms wrapper object.
@@ -306,83 +386,4 @@ function theme_boost_training_coursemodule_edit_post_actions($data, $course) {
     }
 
     return $data;
-}
-
-/**
- * Function theme_boost_training_progress_content
- *
- * @return array
- */
-function theme_boost_training_progress_content() {
-    global $USER, $COURSE;
-
-    $completion = new \completion_info($COURSE);
-
-    // First, let's make sure completion is enabled.
-    if (!$completion->is_enabled()) {
-        return ["isprogress" => false];
-    }
-
-    if (!$completion->is_tracked_user($USER->id)) {
-        return ["isprogress" => false];
-    }
-
-    // Before we check how many modules have been completed see if the course has.
-    if ($completion->is_course_complete($USER->id)) {
-        return [
-            "isprogress" => true,
-            "progress" => 100,
-        ];
-    }
-
-    // Get the number of modules that support completion.
-    $modules = $completion->get_activities();
-    $count = count($modules);
-    if (!$count) {
-        return ["isprogress" => false];
-    }
-
-    // Get the number of modules that have been completed.
-    $completed = 0;
-    foreach ($modules as $module) {
-        $data = $completion->get_data($module, true, $USER->id);
-        if (($data->completionstate == COMPLETION_INCOMPLETE) || ($data->completionstate == COMPLETION_COMPLETE_FAIL)) {
-            $completed += 0;
-        } else {
-            $completed += 1;
-        };
-    }
-
-    return [
-        "isprogress" => true,
-        "progress" => intval(($completed / $count) * 100),
-        "progress_completed" => $completed,
-        "progress_count" => $count,
-    ];
-}
-
-/**
- * Function theme_boost_training_setting_file_url
- *
- * @param $setting
- *
- * @return bool|\core\url
- *
- * @throws dml_exception
- */
-function theme_boost_training_setting_file_url($setting) {
-    global $CFG;
-
-    $filepath = get_config("theme_boost_training", $setting);
-    if (!$filepath) {
-        return false;
-    }
-    $itemid = theme_get_revision();
-    $syscontext = context_system::instance();
-
-    $url = moodle_url::make_file_url(
-        "$CFG->wwwroot/pluginfile.php",
-        "/{$syscontext->id}/theme_boost_training/{$setting}/{$itemid}{$filepath}");
-
-    return $url;
 }
